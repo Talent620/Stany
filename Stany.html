@@ -1,0 +1,3917 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0f14" />
+  <title>Smart Magazyn ERP v4</title>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Magazyn ERP" />
+  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22Smart+Magazyn+ERP%22%2C%22short_name%22%3A%22Magazyn%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230b0f14%22%2C%22theme_color%22%3A%22%2322c55e%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg+xmlns%3D%2527http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%2527+viewBox%3D%25270+0+100+100%2527%253E%253Crect+width%3D%2527100%2527+height%3D%2527100%2527+rx%3D%252722%2527+fill%3D%2527%25230b0f14%2527%2F%253E%253Ctext+y%3D%2527.9em%2527+font-size%3D%252780%2527+x%3D%252710%2527%253E%25F0%259F%2593%25A6%253C%2Ftext%253E%253C%2Fsvg%253E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D" />
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --panel:rgba(17,24,39,.88);
+      --panel2:rgba(15,23,42,.86);
+      --text:#e5e7eb;
+      --muted:#9ca3af;
+      --accent:#22c55e;
+      --accent2:#06b6d4;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --border:rgba(255,255,255,.08);
+      --shadow:0 18px 60px rgba(0,0,0,.35);
+      --radius:22px;
+    }
+    [data-theme="light"]{
+      --bg:#f5f7fb;
+      --panel:rgba(255,255,255,.94);
+      --panel2:rgba(255,255,255,.98);
+      --text:#0f172a;
+      --muted:#475569;
+      --border:rgba(15,23,42,.08);
+      --shadow:0 18px 48px rgba(15,23,42,.10);
+    }
+    [data-theme="matrix"]{
+      --bg:#030705;
+      --panel:rgba(7,19,13,.92);
+      --panel2:rgba(10,26,18,.90);
+      --text:#d6ffe0;
+      --muted:#83b993;
+      --accent:#00ff66;
+      --accent2:#39ff14;
+      --border:rgba(0,255,102,.12);
+      --shadow:0 18px 60px rgba(0,255,102,.08);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(34,197,94,.12), transparent 30%),
+        radial-gradient(circle at top right, rgba(6,182,212,.10), transparent 28%),
+        linear-gradient(180deg, var(--bg), var(--bg));
+      color:var(--text);
+      overflow-x:hidden;
+    }
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+      background-size: 46px 46px;
+      mask-image: radial-gradient(circle at center, black 0%, transparent 85%);
+      opacity:.22;
+    }
+    .wrap{
+      max-width:1600px;
+      margin:0 auto;
+      padding:14px;
+      position:relative;
+      z-index:1;
+    }
+    .topbar{
+      position:sticky; top:10px; z-index:20;
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      flex-wrap:wrap;
+      padding:12px 14px;
+      border:1px solid var(--border);
+      border-radius:24px;
+      background:var(--panel);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(16px);
+    }
+    .brand{display:flex; flex-direction:column; gap:2px; min-width:220px}
+    .brand h1{margin:0;font-size:18px;letter-spacing:.2px}
+    .brand small{color:var(--muted)}
+    .clock{
+      font-variant-numeric:tabular-nums;
+      font-weight:800;
+      font-size:18px;
+      padding:8px 12px;
+      border-radius:14px;
+      background:linear-gradient(135deg, rgba(34,197,94,.12), rgba(6,182,212,.10));
+      border:1px solid var(--border);
+      min-width:104px;
+      text-align:center;
+    }
+    .toolbar{
+      display:flex; gap:8px; flex-wrap:wrap; align-items:center;
+    }
+    input, select, textarea, button{font:inherit}
+    .field, .btn, .tab, textarea, select, input{
+      border-radius:16px;
+      border:1px solid var(--border);
+      background:var(--panel2);
+      color:var(--text);
+      outline:none;
+      transition:.18s ease;
+    }
+    .field, input, select, textarea{
+      padding:11px 12px;
+      min-height:44px;
+    }
+    .field:focus, input:focus, select:focus, textarea:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+    }
+    .btn, .tab{
+      cursor:pointer;
+      padding:11px 14px;
+      font-weight:650;
+      user-select:none;
+      background:linear-gradient(180deg, color-mix(in srgb, var(--panel2) 92%, white 8%), var(--panel2));
+    }
+    .btn:hover, .tab:hover{transform:translateY(-1px); border-color:color-mix(in srgb, var(--accent) 24%, var(--border))}
+    .btn.primary{
+      background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 34%, #111), color-mix(in srgb, var(--accent2) 26%, #111));
+      border-color:transparent;
+    }
+    .btn.danger{background:linear-gradient(135deg, #7f1d1d, #991b1b); border-color:transparent}
+    .btn.ghost{background:transparent}
+    .tabs{display:flex; gap:8px; flex-wrap:wrap; margin:14px 0}
+    .tab.active{
+      background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 28%, #111), color-mix(in srgb, var(--accent2) 20%, #111));
+      border-color:transparent;
+    }
+    .grid{display:grid; gap:14px}
+    .stats{grid-template-columns:repeat(6,minmax(0,1fr))}
+    .stat{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      padding:16px;
+      min-height:104px;
+      backdrop-filter:blur(14px);
+    }
+    .stat .label{color:var(--muted); font-size:13px}
+    .stat .value{font-size:30px; font-weight:900; margin-top:8px}
+    .stat .sub{color:var(--muted); font-size:13px; margin-top:6px}
+    .layout{
+      display:grid;
+      grid-template-columns:1.65fr .95fr;
+      gap:14px;
+      margin-top:14px;
+      align-items:start;
+    }
+    .panel{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      backdrop-filter:blur(14px);
+    }
+    .panel-head{
+      padding:14px 16px;
+      border-bottom:1px solid var(--border);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .panel-head h2{margin:0;font-size:16px}
+    .panel-body{padding:14px 16px}
+    .mini{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+    .badge{
+      display:inline-flex; align-items:center; gap:6px;
+      font-size:12px;
+      padding:5px 9px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+    }
+    .pill{
+      display:inline-flex; align-items:center;
+      padding:5px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      color:var(--muted);
+      font-size:12px;
+    }
+    .status-ok{color:#22c55e}
+    .status-warn{color:#f59e0b}
+    .status-bad{color:#ef4444}
+    .filters{
+      display:grid;
+      grid-template-columns:1.2fr .8fr .8fr .8fr .8fr .55fr;
+      gap:10px;
+      margin-bottom:12px;
+    }
+    .items-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+      gap:12px;
+    }
+    .item-card{
+      background:linear-gradient(180deg, rgba(255,255,255,.05), transparent);
+      border:1px solid var(--border);
+      border-radius:22px;
+      padding:14px;
+    }
+    .item-card:hover{transform:translateY(-1px); border-color:color-mix(in srgb, var(--accent) 24%, var(--border))}
+    .item-top{display:flex; justify-content:space-between; gap:10px; align-items:flex-start}
+    .item-title{font-size:17px; font-weight:850; margin:0}
+    .meta{color:var(--muted); font-size:13px; line-height:1.45; margin-top:8px}
+    .tags{display:flex; gap:6px; flex-wrap:wrap; margin-top:10px}
+    .tag{
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:999px;
+      background:rgba(34,197,94,.12);
+      border:1px solid color-mix(in srgb,var(--accent) 24%, var(--border));
+    }
+    .actions{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+    .actions .btn{padding:9px 10px; min-height:auto; font-size:13px}
+    .table-wrap{overflow:auto; border-radius:18px; border:1px solid var(--border)}
+    table{width:100%; border-collapse:collapse; min-width:1200px; background:rgba(255,255,255,.01)}
+    th, td{padding:10px 10px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top}
+    th{position:sticky; top:0; background:color-mix(in srgb, var(--panel2) 88%, transparent); backdrop-filter:blur(14px)}
+    tr:hover td{background:rgba(255,255,255,.02)}
+    .sidebar{display:grid; gap:14px; position:sticky; top:106px}
+    .list{display:grid; gap:10px; max-height:430px; overflow:auto; padding-right:4px}
+    .list-item{
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:12px;
+      background:rgba(255,255,255,.02);
+    }
+    .list-item .head{display:flex; justify-content:space-between; gap:8px; align-items:center; margin-bottom:6px}
+    .small{font-size:12px; color:var(--muted)}
+    .split{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .form-grid{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px}
+    .form-grid-3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px}
+    .form-grid-4{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px}
+    .full{grid-column:1/-1}
+    .clock-card{
+      padding:18px;
+      border-radius:24px;
+      background:
+        radial-gradient(circle at top right, rgba(34,197,94,.20), transparent 35%),
+        linear-gradient(135deg, rgba(34,197,94,.10), rgba(6,182,212,.08));
+      border:1px solid var(--border);
+    }
+    .big-clock{font-size:42px; font-weight:900; font-variant-numeric:tabular-nums; letter-spacing:1px}
+    .calendar-list{display:grid; gap:10px; max-height:460px; overflow:auto}
+    .event{
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:12px;
+      background:rgba(255,255,255,.02);
+    }
+    .event .date{font-weight:800}
+    .event .title{margin:6px 0 0; font-size:15px}
+    .toast-wrap{
+      position:fixed;
+      right:14px;
+      bottom:14px;
+      display:grid;
+      gap:10px;
+      z-index:99;
+    }
+    .toast{
+      min-width:250px;
+      max-width:380px;
+      padding:12px 14px;
+      border-radius:18px;
+      background:var(--panel);
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(12px);
+      animation:pop .2s ease;
+    }
+    @keyframes pop{from{transform:translateY(10px);opacity:.5}to{transform:translateY(0);opacity:1}}
+    .toast.success{border-color:color-mix(in srgb, var(--accent) 34%, var(--border))}
+    .toast.warn{border-color:color-mix(in srgb, var(--warn) 34%, var(--border))}
+    .toast.danger{border-color:color-mix(in srgb, var(--danger) 34%, var(--border))}
+    .help{color:var(--muted); font-size:13px; line-height:1.5}
+    .scan-box{
+      border:1px dashed var(--border);
+      border-radius:20px;
+      padding:14px;
+      background:rgba(255,255,255,.02);
+      display:grid;
+      gap:10px;
+    }
+    video{width:100%; border-radius:18px; background:#000; max-height:360px}
+    dialog{
+      border:none;
+      padding:0;
+      border-radius:24px;
+      width:min(1180px, 96vw);
+      background:transparent;
+      color:var(--text);
+    }
+    dialog::backdrop{background:rgba(0,0,0,.65); backdrop-filter:blur(6px)}
+    .dialog-card{
+      background:var(--panel);
+      border:1px solid var(--border);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .dialog-head{
+      padding:14px 16px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      border-bottom:1px solid var(--border);
+    }
+    .dialog-body{padding:16px}
+    .summary-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px}
+    .map-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px}
+    .map-card{padding:14px; border:1px solid var(--border); border-radius:20px; background:rgba(255,255,255,.02)}
+    .doc-list{display:grid; gap:10px}
+    .trash-list{display:grid; gap:10px}
+    .code-row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+    .hidden{display:none !important}
+    .muted{color:var(--muted)}
+    @media (max-width:1200px){
+      .layout{grid-template-columns:1fr}
+      .sidebar{position:static}
+      .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .filters{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media (max-width:760px){
+      .wrap{padding:10px; padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+      .topbar{padding:10px; top:6px}
+      .brand{min-width:unset; width:100%}
+      .brand h1{font-size:15px}
+      .clock{font-size:15px; padding:6px 10px}
+      .toolbar{width:100%; gap:6px}
+      .toolbar .field{flex:1}
+      .toolbar .btn,.toolbar select{flex:0 0 auto}
+      .toolbar-desktop{display:none !important}
+      #scanBtnMobile{display:inline-flex !important}
+      .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .stat{min-height:80px; padding:12px}
+      .stat .value{font-size:24px}
+      .form-grid,.form-grid-3,.form-grid-4,.split{grid-template-columns:1fr}
+      .filters{grid-template-columns:1fr}
+      .big-clock{font-size:28px}
+      .tabs{display:none !important}
+      .items-grid{grid-template-columns:1fr}
+      .btn,.tab{min-height:44px; padding:11px 12px}
+      dialog{width:100vw !important; min-height:100dvh; border-radius:0 !important; margin:0; max-width:none !important}
+      dialog::backdrop{background:rgba(0,0,0,.8)}
+      .dialog-card{border-radius:0; min-height:100dvh}
+      .dialog-head{padding:16px; position:sticky; top:0; z-index:5; background:var(--panel); border-bottom:1px solid var(--border)}
+      .dialog-body{padding:14px 14px calc(80px + env(safe-area-inset-bottom,0px)) 14px}
+    }
+
+    /* ── BOTTOM MOBILE NAV ── */
+    .mobile-nav{
+      display:none;
+      position:fixed;
+      bottom:0; left:0; right:0;
+      z-index:30;
+      background:var(--panel);
+      border-top:1px solid var(--border);
+      backdrop-filter:blur(20px);
+      -webkit-backdrop-filter:blur(20px);
+      padding-bottom:env(safe-area-inset-bottom,0px);
+    }
+    .mobile-nav-inner{
+      display:flex;
+      gap:0;
+    }
+    .nav-item{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:8px 2px 6px;
+      gap:3px;
+      cursor:pointer;
+      border:none;
+      background:transparent;
+      color:var(--muted);
+      font-size:9px;
+      font-weight:600;
+      letter-spacing:.2px;
+      min-height:52px;
+      transition:color .15s;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .nav-item .nav-icon{font-size:20px; line-height:1; display:block}
+    .nav-item.active{color:var(--accent)}
+    .nav-item.nav-scan{
+      color:#fff;
+    }
+    .nav-item.nav-scan .nav-icon-wrap{
+      width:44px; height:44px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      display:flex; align-items:center; justify-content:center;
+      font-size:20px;
+      margin-top:-14px;
+      box-shadow:0 4px 18px rgba(34,197,94,.45);
+    }
+    @media (max-width:760px){
+      .mobile-nav{display:block}
+    }
+
+    /* ── FAB (floating add button, desktop only) ── */
+    .fab-wrap{
+      display:none;
+      position:fixed;
+      right:16px;
+      bottom:calc(76px + env(safe-area-inset-bottom,0px));
+      z-index:24;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+    }
+    @media (max-width:760px){
+      .fab-wrap{display:flex}
+    }
+    .fab{
+      width:48px; height:48px;
+      border-radius:50%;
+      border:none;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:20px;
+      box-shadow:0 4px 16px rgba(0,0,0,.35);
+      transition:transform .15s, box-shadow .15s;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .fab:active{transform:scale(.92)}
+    .fab-add{
+      background:var(--panel2);
+      border:1px solid var(--border);
+      color:var(--text);
+      font-size:24px;
+    }
+
+    /* ── QUICK-ADD dialog styles ── */
+    .qa-barcode-badge{
+      background:rgba(34,197,94,.10);
+      border:1px solid rgba(34,197,94,.30);
+      border-radius:14px;
+      padding:10px 14px;
+      margin-bottom:14px;
+      font-size:14px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .qa-barcode-badge .qa-code{
+      font-family:ui-monospace,monospace;
+      font-weight:800;
+      color:var(--accent);
+      word-break:break-all;
+      flex:1;
+    }
+    .quick-add-grid{
+      display:grid;
+      gap:10px;
+    }
+    .quick-add-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+    /* ── AI Review dialog ── */
+    .ai-thumb{
+      width:100%; max-height:220px; object-fit:contain;
+      border-radius:14px; margin-bottom:12px;
+      background:rgba(0,0,0,.2); display:block;
+    }
+    .ai-confidence-bar{
+      flex:1; height:7px; border-radius:999px;
+      background:rgba(255,255,255,.08); overflow:hidden;
+    }
+    .ai-confidence-fill{
+      height:100%; border-radius:999px;
+      background:linear-gradient(90deg,var(--warn),var(--accent));
+      transition:width .6s cubic-bezier(.34,1.56,.64,1);
+    }
+    .ai-field-label{
+      font-size:11px; color:var(--muted); margin-bottom:3px; font-weight:600; letter-spacing:.3px;
+    }
+    .ai-loading-wrap{
+      display:flex; flex-direction:column; align-items:center;
+      justify-content:center; padding:30px 20px; gap:12px; text-align:center;
+    }
+    .ai-spinner{
+      width:40px; height:40px; border:3px solid var(--border);
+      border-top-color:var(--accent); border-radius:50%;
+      animation:spin .8s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .ai-tag{
+      display:inline-flex; align-items:center; gap:4px;
+      background:rgba(34,197,94,.12); border:1px solid rgba(34,197,94,.25);
+      border-radius:999px; padding:3px 9px; font-size:12px; cursor:pointer;
+      transition:background .12s;
+    }
+    .ai-tag:hover{ background:rgba(34,197,94,.22); }
+    .ai-tag.ai-tag-rm{ background:rgba(239,68,68,.10); border-color:rgba(239,68,68,.25); }
+
+    /* scan AI button pill */
+    .scan-ai-btn{
+      background:linear-gradient(135deg,rgba(139,92,246,.28),rgba(6,182,212,.20));
+      border-color:rgba(139,92,246,.35);
+      color:var(--text);
+    }
+    .scan-ai-btn:hover{ border-color:rgba(139,92,246,.6); }
+
+    .nav-item { position: relative; }
+    .nav-badge {
+      position: absolute;
+      top: 4px;
+      right: calc(50% - 18px);
+      background: var(--danger);
+      color: #fff;
+      border-radius: 999px;
+      min-width: 16px;
+      height: 16px;
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      padding: 0 3px;
+      border: 1px solid var(--bg);
+      pointer-events: none;
+    }
+    .nav-badge.warn { background: var(--warn); color: #111; }
+
+    /* Quick count buttons */
+    .qc-btn {
+      width: 64px !important; height: 64px !important;
+      border-radius: 50% !important;
+      font-size: 28px !important;
+      padding: 0 !important;
+      flex-shrink: 0;
+    }
+
+    /* Clickable stat cards */
+    .stat-link { cursor: pointer; transition: transform .15s, border-color .15s !important; }
+    .stat-link:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 30%, var(--border)) !important; }
+    .stat-link:active { transform: scale(.97); }
+
+    /* Inline qty editor */
+    .qty-cell {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 15px;
+      transition: border-color .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .qty-cell:hover { border-color: var(--accent); }
+
+    /* Item card improvements */
+    .item-card .card-actions {
+      display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap;
+    }
+    .item-card .card-actions .btn {
+      padding: 8px 10px; font-size: 13px; flex: 1; min-width: 0; text-align: center;
+    }
+  </style>
+</head>
+<body data-theme="matrix">
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">
+      <h1>📦 Smart Magazyn ERP <span style="font-size:13px;color:var(--accent);font-weight:600">v4</span></h1>
+      <small>Telefon jako główne narzędzie. Szybko, bez klikania na około.</small>
+    </div>
+    <div class="clock" id="clock">--:--</div>
+    <div class="toolbar">
+      <input id="globalSearch" class="field" style="min-width:140px" placeholder="Szukaj..." />
+      <button class="btn primary toolbar-desktop" id="voiceBtn">🎤</button>
+      <button class="btn primary" id="newItemBtn">+ Przedmiot</button>
+      <button class="btn" id="scanBtnMobile" style="display:none">📷</button>
+      <button class="btn toolbar-desktop" id="scanBtn">📷 Skan</button>
+      <button class="btn toolbar-desktop" id="exportBtn">⬇ Eksport</button>
+      <label class="btn toolbar-desktop" style="display:inline-flex;align-items:center;gap:8px;cursor:pointer">
+        ⬆ Import
+        <input id="importFile" type="file" accept="application/json" hidden>
+      </label>
+      <select id="themeSel" class="field toolbar-desktop" style="min-width:120px">
+        <option value="matrix">Matrix</option>
+        <option value="dark">Ciemny</option>
+        <option value="light">Jasny</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-view="dashboard">Pulpit</button>
+    <button class="tab" data-view="inventory">Magazyn</button>
+    <button class="tab" data-view="locations">Lokalizacje</button>
+    <button class="tab" data-view="bundles">Zestawy</button>
+    <button class="tab" data-view="loans">Wypożyczenia</button>
+    <button class="tab" data-view="calendar">Kalendarz</button>
+    <button class="tab" data-view="shopping">Zakupy</button>
+    <button class="tab" data-view="docs">Dokumenty</button>
+    <button class="tab" data-view="history">Historia</button>
+    <button class="tab" data-view="settings">Ustawienia</button>
+  </div>
+
+  <section id="view-dashboard" class="view">
+    <div class="grid stats" id="stats"></div>
+    <div class="layout">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Najważniejsze teraz</h2>
+          <div class="mini">
+            <span class="badge" id="todayBadge"></span>
+            <span class="badge" id="lowBadge"></span>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="split">
+            <div class="scan-box">
+              <strong>Szybkie akcje</strong>
+              <div class="mini">
+                <button class="btn primary" id="quickAddSample">Dodaj próbkę</button>
+                <button class="btn" id="quickAddLocation">+ Lokalizacja</button>
+                <button class="btn" id="quickAddEvent">+ Wydarzenie</button>
+              </div>
+              <div class="help">
+                Skróty: <b>N</b> nowy przedmiot, <b>S</b> skaner, <b>/</b> szukaj, <b>V</b> głos.
+              </div>
+            </div>
+            <div class="scan-box">
+              <strong>Ostatnie zmiany</strong>
+              <div class="list" id="recentList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel sidebar">
+        <div class="panel-head"><h2>Najbliższe terminy</h2></div>
+        <div class="panel-body">
+          <div class="calendar-list" id="miniAgenda"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-inventory" class="view hidden">
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Magazyn</h2>
+        <div class="mini">
+          <button class="btn" id="toggleViewBtn">Tabela</button>
+          <button class="btn" id="quickCountBtn" title="Szybkie liczenie stanów">📋 Liczenie</button>
+          <button class="btn toolbar-desktop" id="saveFilterBtn">Zapisz filtr</button>
+          <select id="savedViews" class="field toolbar-desktop"><option value="">Zakładki filtrów</option></select>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="filters">
+          <input id="filterSearch" class="field" placeholder="Szukaj..." />
+          <select id="filterCategory" class="field"><option value="">Kategoria</option></select>
+          <select id="filterLocation" class="field"><option value="">Lokalizacja</option></select>
+          <select id="filterStatus" class="field">
+            <option value="">Status</option>
+            <option value="available">Dostępny</option>
+            <option value="borrowed">Wypożyczony</option>
+            <option value="sold">Sprzedany</option>
+            <option value="in_repair">W naprawie</option>
+            <option value="reserved">Zarezerwowany</option>
+            <option value="lost">Zaginiony</option>
+          </select>
+          <select id="sortBy" class="field">
+            <option value="updatedAt">Sortuj: ostatnia zmiana</option>
+            <option value="name">Nazwa</option>
+            <option value="quantity">Ilość</option>
+            <option value="price">Cena</option>
+            <option value="minQuantity">Minimalny stan</option>
+            <option value="expiryDate">Data ważności</option>
+          </select>
+          <button class="btn" id="clearFilters">Wyczyść</button>
+        </div>
+        <div id="inventoryCards" class="items-grid"></div>
+        <div id="inventoryTableWrap" class="table-wrap hidden">
+          <table>
+            <thead>
+              <tr>
+                <th data-sort="name">Nazwa</th>
+                <th data-sort="category">Kategoria</th>
+                <th data-sort="locationName">Lokalizacja</th>
+                <th data-sort="quantity">Ilość</th>
+                <th data-sort="price">Cena</th>
+                <th data-sort="minQuantity">Min</th>
+                <th data-sort="expiryDate">Ważność</th>
+                <th>Tagi</th>
+                <th>Status</th>
+                <th>Akcje</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-locations" class="view hidden">
+    <div class="layout">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Lokalizacje i mapa domu</h2>
+          <div class="mini">
+            <button class="btn primary" id="addLocationBtn">+ Lokalizacja</button>
+            <button class="btn" id="printLocationCodes">Kody do wydruku</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="map-grid" id="locationGrid"></div>
+        </div>
+      </div>
+      <div class="panel sidebar">
+        <div class="panel-head"><h2>Mapa pomieszczeń</h2></div>
+        <div class="panel-body">
+          <div class="list" id="locationSummary"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-bundles" class="view hidden">
+    <div class="layout">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Zestawy</h2>
+          <div class="mini">
+            <button class="btn primary" id="addBundleBtn">+ Zestaw</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="summary-grid" id="bundleGrid"></div>
+        </div>
+      </div>
+      <div class="panel sidebar">
+        <div class="panel-head"><h2>Co jest w zestawie</h2></div>
+        <div class="panel-body">
+          <div class="list" id="bundleSideList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-loans" class="view hidden">
+    <div class="layout">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Wypożyczenia i sprzedaż</h2>
+          <div class="mini">
+            <button class="btn primary" id="addLoanBtn">+ Wypożyczenie</button>
+            <button class="btn" id="addSaleBtn">+ Sprzedaż</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="split">
+            <div class="scan-box">
+              <strong>Aktywne wypożyczenia</strong>
+              <div class="list" id="loanList"></div>
+            </div>
+            <div class="scan-box">
+              <strong>Na sprzedaż</strong>
+              <div class="list" id="saleList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel sidebar">
+        <div class="panel-head"><h2>Przypomnienia</h2></div>
+        <div class="panel-body">
+          <div class="list" id="loanReminderList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-calendar" class="view hidden">
+    <div class="layout">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Kalendarz</h2>
+          <div class="mini">
+            <button class="btn primary" id="addEventBtn">+ Wydarzenie</button>
+            <button class="btn" id="icalExportBtn">Eksport iCal</button>
+          </div>
+        </div>
+        <div class="panel-body calendar">
+          <div class="clock-card">
+            <div class="big-clock" id="bigClock">--:--:--</div>
+            <div class="small" id="bigDate">-</div>
+          </div>
+          <div class="split">
+            <div class="scan-box">
+              <strong>Dziś</strong>
+              <div class="calendar-list" id="todayEvents"></div>
+            </div>
+            <div class="scan-box">
+              <strong>Nadchodzące</strong>
+              <div class="calendar-list" id="futureEvents"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel sidebar">
+        <div class="panel-head"><h2>Przypomnienia</h2></div>
+        <div class="panel-body">
+          <div class="list" id="reminderList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-shopping" class="view hidden">
+    <div class="layout">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Zakupy</h2>
+          <div class="mini">
+            <button class="btn" id="copyShopping">📋 Kopiuj</button>
+            <button class="btn" id="shareShopping">📤 Wyślij</button>
+            <button class="btn primary" id="addShoppingItem">+ Ręcznie</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="help">Lista tworzy się sama z braków stanu, minimalnego progu i tagu <b>do kupienia</b>.</div>
+          <div class="list" id="shoppingList"></div>
+        </div>
+      </div>
+      <div class="panel sidebar">
+        <div class="panel-head"><h2>Inteligentne sugestie</h2></div>
+        <div class="panel-body">
+          <div class="list" id="shoppingTips"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-docs" class="view hidden">
+    <div class="layout">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Dokumenty, gwarancje, zdjęcia</h2>
+          <div class="mini">
+            <button class="btn primary" id="addDocBtn">+ Dokument</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="doc-list" id="docList"></div>
+        </div>
+      </div>
+      <div class="panel sidebar">
+        <div class="panel-head"><h2>Historia plików</h2></div>
+        <div class="panel-body">
+          <div class="list" id="docTips"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-history" class="view hidden">
+    <div class="layout">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Historia zmian</h2>
+          <div class="mini">
+            <button class="btn" id="filterHistoryToggle">Tylko wybrane</button>
+            <button class="btn danger" id="emptyTrashBtn">Opróżnij kosz</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="split">
+            <div class="scan-box">
+              <strong>Ostatnie zdarzenia</strong>
+              <div class="list" id="historyList"></div>
+            </div>
+            <div class="scan-box">
+              <strong>Kosz przywracania</strong>
+              <div class="list" id="trashList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel sidebar">
+        <div class="panel-head"><h2>Wszystko w skrócie</h2></div>
+        <div class="panel-body">
+          <div class="list" id="historyStats"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-settings" class="view hidden">
+    <div class="layout">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Ustawienia, backup, synchronizacja</h2>
+          <div class="mini">
+            <button class="btn" id="exportJsonBtn">Pobierz JSON</button>
+            <button class="btn" id="downloadCsvBtn">Pobierz CSV</button>
+            <button class="btn danger" id="resetBtn">Wyczyść wszystko</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="form-grid">
+            <div class="scan-box full">
+              <strong>Widok</strong>
+              <div class="form-grid-3">
+                <label class="help">Domyślny widok
+                  <select id="prefView" class="field">
+                    <option value="cards">Karty</option>
+                    <option value="table">Tabela</option>
+                  </select>
+                </label>
+                <label class="help">Motyw
+                  <select id="prefTheme" class="field">
+                    <option value="matrix">Matrix</option>
+                    <option value="dark">Ciemny</option>
+                    <option value="light">Jasny</option>
+                  </select>
+                </label>
+                <label class="help">Auto zapis
+                  <select id="prefAutoSave" class="field">
+                    <option value="on">Włączony</option>
+                    <option value="off">Wyłączony</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div class="scan-box full">
+              <strong>Supabase sync</strong>
+              <div class="form-grid-4">
+                <input id="sbUrl" class="field full" placeholder="URL projektu Supabase" />
+                <input id="sbKey" class="field full" placeholder="Anon key" />
+                <input id="sbTable" class="field" placeholder="Tabela" value="smart_magazyn_state" />
+                <input id="sbRowId" class="field" placeholder="Row ID" value="main" />
+              </div>
+              <div class="mini">
+                <label class="badge"><input type="checkbox" id="sbEnabled"> sync włączony</label>
+                <button class="btn primary" id="sbPull">Pobierz z chmury</button>
+                <button class="btn" id="sbPush">Wyślij do chmury</button>
+              </div>
+              <div class="help">
+                Najprościej zrobić jedną tabelę z kolumnami: <span class="mono">id text primary key, payload jsonb, updated_at timestamptz</span>.
+                Gdy konfiguracja jest wpisana, program sam porównuje datę zmian i zsynchronizuje nowszą wersję.
+              </div>
+            </div>
+            <div class="scan-box full">
+              <strong>🤖 Rozpoznawanie AI przez zdjęcie — klucz Anthropic</strong>
+              <div class="help" style="margin:6px 0 10px">
+                Pobierz bezpłatny klucz na <a href="https://console.anthropic.com" target="_blank" style="color:var(--accent2)">console.anthropic.com</a>.
+                Klucz jest przechowywany <b>tylko lokalnie</b> w tej przeglądarce — nigdy nie trafia do żadnego serwera zewnętrznego.<br>
+                <b>Jak działa:</b> zrób zdjęcie czegokolwiek → Claude Vision rozpozna przedmiot → wypełni formularz → Ty akceptujesz.
+              </div>
+              <div class="mini">
+                <input id="anthropicKeyInput" class="field" type="password" placeholder="sk-ant-api03-..." style="flex:1;font-family:monospace" autocomplete="off" />
+                <button class="btn primary" id="saveAnthropicKey">Zapisz klucz</button>
+                <button class="btn" id="clearAnthropicKey">Wyczyść</button>
+              </div>
+              <div id="anthropicKeyStatus" class="small" style="margin-top:8px"></div>
+              <div class="mini" style="margin-top:10px">
+                <button class="btn" id="testAnthropicKey">🧪 Przetestuj połączenie</button>
+              </div>
+            </div>
+              <div class="help">
+                Aby kamera skanera działała, plik musi być serwowany przez HTTP(S), nie z dysku (<span class="mono">file://</span>).<br><br>
+                <b>Opcja 1 — Python (zero konfiguracji):</b><br>
+                <span class="mono">cd /katalog/z/plikiem && python3 -m http.server 8080</span><br>
+                Otwórz: <a href="http://localhost:8080" target="_blank" style="color:var(--accent2)">http://localhost:8080</a><br><br>
+                <b>Opcja 2 — autostart przy logowaniu (Ubuntu/UDOO):</b><br>
+                <span class="mono">nano ~/.bashrc</span> → dodaj na końcu:<br>
+                <span class="mono">cd ~/magazyn && python3 -m http.server 8080 &</span><br><br>
+                <b>Opcja 3 — Caddy (HTTPS z certyfikatem):</b><br>
+                <span class="mono">sudo apt install caddy<br>echo 'localhost { root * ~/magazyn; file_server }' > Caddyfile && caddy run</span><br><br>
+                <b>Czytnik USB/BT:</b> Działa bez serwera — skaner emuluje klawiaturę, pole skanera w dialogu ma auto-focus.
+              </div>
+              <div class="mini">
+                <button class="btn" id="copyPythonCmd" type="button">📋 Kopiuj komendę Python</button>
+                <span id="httpsStatusBadge" class="badge"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel sidebar">
+        <div class="panel-head"><h2>Statystyka techniczna</h2></div>
+        <div class="panel-body">
+          <div class="list" id="settingsStats"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ══ MOBILE BOTTOM NAVIGATION ══ -->
+<nav class="mobile-nav" id="mobileNav">
+  <div class="mobile-nav-inner">
+    <button class="nav-item active" data-navview="dashboard">
+      <span class="nav-icon">📊</span>
+      Pulpit
+    </button>
+    <button class="nav-item" data-navview="inventory">
+      <span class="nav-icon">🗃️</span>
+      Magazyn
+    </button>
+    <button class="nav-item nav-scan" id="navScanBtn">
+      <span class="nav-icon-wrap">📷</span>
+      Skan
+    </button>
+    <button class="nav-item" data-navview="shopping">
+      <span class="nav-icon">🛒</span>
+      Zakupy
+    </button>
+    <button class="nav-item" data-navview="settings">
+      <span class="nav-icon">⚙️</span>
+      Więcej
+    </button>
+  </div>
+</nav>
+
+<!-- ══ FAB – Szybkie dodawanie (mobile) ══ -->
+<div class="fab-wrap" id="fabWrap">
+  <button class="fab fab-add" id="fabAdd" title="Nowy przedmiot">＋</button>
+</div>
+
+<!-- ══ AI REVIEW — Rozpoznawanie przez AI ══ -->
+<dialog id="aiReviewDialog">
+  <div class="dialog-card">
+    <div class="dialog-head">
+      <strong>🤖 AI rozpoznało przedmiot</strong>
+      <button class="btn" onclick="aiReviewDialog.close()">✕ Zamknij</button>
+    </div>
+    <div class="dialog-body">
+
+      <!-- Stan ładowania -->
+      <div id="aiReviewLoading" class="ai-loading-wrap">
+        <div class="ai-spinner"></div>
+        <div id="aiReviewStatus" style="font-size:14px;color:var(--muted)">Analizuję zdjęcie...</div>
+        <div class="small" style="color:var(--muted)">Claude Vision identyfikuje przedmiot i szuka informacji</div>
+      </div>
+
+      <!-- Wyniki AI -->
+      <div id="aiReviewContent" style="display:none">
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap">
+          <img id="aiThumb" class="ai-thumb" style="width:120px;max-height:120px;flex-shrink:0" src="" alt="" />
+          <div style="flex:1;min-width:160px">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:5px;font-weight:700">PEWNOŚĆ ROZPOZNANIA</div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="ai-confidence-bar"><div class="ai-confidence-fill" id="aiConfidenceFill" style="width:0%"></div></div>
+              <span id="aiConfidenceText" style="font-size:13px;font-weight:800;min-width:32px">—</span>
+            </div>
+            <div id="aiConfidenceLabel" class="small" style="margin-top:4px;color:var(--muted)"></div>
+            <div id="aiNotes" class="help" style="margin-top:8px;font-size:12px"></div>
+          </div>
+        </div>
+
+        <div style="display:grid;gap:10px">
+          <div>
+            <div class="ai-field-label">NAZWA PRZEDMIOTU *</div>
+            <input id="aiName" class="field" placeholder="Nazwa" required style="font-weight:700" />
+          </div>
+          <div class="quick-add-row">
+            <div>
+              <div class="ai-field-label">KATEGORIA</div>
+              <input id="aiCategory" class="field" placeholder="Kategoria" />
+            </div>
+            <div>
+              <div class="ai-field-label">MARKA / MODEL</div>
+              <input id="aiBrand" class="field" placeholder="Marka lub model" />
+            </div>
+          </div>
+          <div>
+            <div class="ai-field-label">OPIS</div>
+            <textarea id="aiDesc" class="field" rows="2" placeholder="Opis przedmiotu"></textarea>
+          </div>
+          <div class="quick-add-row">
+            <div>
+              <div class="ai-field-label">CENA SZACUNKOWA (PLN)</div>
+              <input id="aiPrice" class="field" type="number" min="0" step="0.01" placeholder="0.00" />
+            </div>
+            <div>
+              <div class="ai-field-label">ILOŚĆ</div>
+              <input id="aiQty" class="field" type="number" min="1" value="1" />
+            </div>
+          </div>
+          <div>
+            <div class="ai-field-label">LOKALIZACJA</div>
+            <select id="aiLocation" class="field"></select>
+          </div>
+          <div>
+            <div class="ai-field-label">TAGI (kliknij aby usunąć, + aby dodać)</div>
+            <div id="aiTagsWrap" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px"></div>
+            <input id="aiTagInput" class="field" placeholder="Dodaj tag i naciśnij Enter" style="font-size:13px" />
+          </div>
+          <div id="aiAlternatives" style="display:none">
+            <div class="ai-field-label">INNE MOŻLIWE ROZPOZNANIA</div>
+            <div id="aiAltList" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+            <button class="btn primary" id="aiAddBtn" style="flex:1;min-width:160px;font-weight:800">✅ Dodaj do magazynu</button>
+            <button class="btn" id="aiRetryBtn" style="flex:1;min-width:100px">🔄 Inne zdjęcie</button>
+          </div>
+          <div class="help" style="font-size:11px;margin-top:-4px">Sprawdź dane przed dodaniem. AI może się mylić — masz pełną kontrolę.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</dialog>
+
+<!-- ══ QUICK COUNT — Szybkie liczenie magazynu ══ -->
+<dialog id="quickCountDialog">
+  <div class="dialog-card">
+    <div class="dialog-head">
+      <strong>📋 Szybkie liczenie</strong>
+      <button class="btn" onclick="quickCountDialog.close(); saveState()">✕ Zapisz i wyjdź</button>
+    </div>
+    <div class="dialog-body" style="text-align:center">
+      <div id="qcProgress" class="small" style="margin-bottom:6px;color:var(--muted);font-weight:700;letter-spacing:.5px">—</div>
+      <div style="background:linear-gradient(135deg,rgba(34,197,94,.08),rgba(6,182,212,.06));border:1px solid var(--border);border-radius:20px;padding:18px 16px;margin-bottom:16px">
+        <div id="qcItemName" style="font-size:22px;font-weight:900;margin-bottom:4px;word-break:break-word">—</div>
+        <div id="qcItemMeta" class="small" style="color:var(--muted)">—</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:20px">
+        <button class="btn qc-btn" id="qcMinus">−</button>
+        <div>
+          <input id="qcQtyInput" type="number" class="field" style="font-size:42px;font-weight:900;width:120px;text-align:center;padding:6px;min-height:72px;border-radius:18px" min="0" step="1" value="0" />
+          <div class="small" style="margin-top:4px;color:var(--muted)" id="qcUnit">szt</div>
+        </div>
+        <button class="btn primary qc-btn" id="qcPlus">+</button>
+      </div>
+      <div class="mini" style="justify-content:center;gap:10px;flex-wrap:wrap">
+        <button class="btn primary" id="qcSaveNext" style="flex:1;min-width:140px">✅ Zapisz → Dalej</button>
+        <button class="btn" id="qcSkip" style="flex:1;min-width:100px">⏩ Pomiń</button>
+      </div>
+      <div class="mini" style="margin-top:10px;justify-content:center">
+        <button class="btn danger" id="qcSaveDone" style="flex:1;min-width:140px">💾 Zapisz wszystko i zakończ</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
+<!-- ══ QUICK-ADD FROM BARCODE ══ -->
+<dialog id="quickAddDialog">
+  <div class="dialog-card">
+    <div class="dialog-head">
+      <strong>⚡ Szybkie dodanie z kodu</strong>
+      <button class="btn" onclick="quickAddDialog.close()">✕ Zamknij</button>
+    </div>
+    <div class="dialog-body">
+      <div class="qa-barcode-badge">
+        <span>📷</span>
+        <div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:2px">Zeskanowany kod</div>
+          <div class="qa-code" id="quickAddBarcodeDisplay">—</div>
+        </div>
+      </div>
+      <form id="quickAddForm">
+        <input type="hidden" id="quickAddBarcode" />
+        <div class="quick-add-grid">
+          <input id="quickAddName" class="field" placeholder="Nazwa przedmiotu *" required />
+          <div class="quick-add-row">
+            <input id="quickAddQty" class="field" type="number" min="0" step="1" value="1" placeholder="Ilość" />
+            <input id="quickAddCategory" class="field" placeholder="Kategoria" />
+          </div>
+          <select id="quickAddLocation" class="field"></select>
+          <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+            <button class="btn primary" type="submit" style="flex:1;min-width:140px">✅ Dodaj przedmiot</button>
+            <button class="btn" type="button" id="quickAddFullFormBtn" style="flex:1;min-width:120px">✏️ Pełny formularz</button>
+          </div>
+          <div class="help" style="margin-top:4px">Kod zostanie zapisany automatycznie. Możesz uzupełnić szczegóły później.</div>
+        </div>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="itemDialog">
+  <div class="dialog-card">
+    <div class="dialog-head">
+      <strong id="itemDialogTitle">Przedmiot</strong>
+      <button class="btn" onclick="itemDialog.close()">✕ Zamknij</button>
+    </div>
+    <div class="dialog-body">
+      <form id="itemForm">
+        <input type="hidden" id="itemId" />
+        <div class="form-grid-3">
+          <input id="itemName" class="field full" placeholder="Nazwa" required />
+          <input id="itemCategory" class="field" placeholder="Kategoria" />
+          <select id="itemStatus" class="field">
+            <option value="available">Dostępny</option>
+            <option value="borrowed">Wypożyczony</option>
+            <option value="in_repair">W naprawie</option>
+            <option value="reserved">Zarezerwowany</option>
+            <option value="sold">Sprzedany</option>
+            <option value="lost">Zaginiony</option>
+          </select>
+          <input id="itemQty" class="field" type="number" min="0" step="1" placeholder="Ilość" value="1" />
+          <input id="itemUnit" class="field" placeholder="Jednostka" value="szt" />
+          <input id="itemPrice" class="field" type="number" min="0" step="0.01" placeholder="Cena" />
+          <input id="itemMin" class="field" type="number" min="0" step="1" placeholder="Minimum" />
+          <select id="itemLocation" class="field"></select>
+          <input id="itemBarcode" class="field" placeholder="Kod kreskowy / QR / EAN13" />
+        </div>
+        <textarea id="itemDesc" class="field full" rows="3" placeholder="Opis"></textarea>
+        <textarea id="itemTags" class="field full" rows="2" placeholder="Tagi oddzielone przecinkami"></textarea>
+        <textarea id="itemPhotos" class="field full" rows="2" placeholder="Zdjęcia / linki, jedna linia = jeden wpis"></textarea>
+        <textarea id="itemChecklist" class="field full" rows="4" placeholder="Checklist, jedna linia = jeden punkt"></textarea>
+        <textarea id="itemNeedBuy" class="field full" rows="4" placeholder="Co dokupić, jedna linia = jeden wpis"></textarea>
+        <div class="mini" style="margin-top:12px">
+          <button class="btn primary" type="submit">Zapisz</button>
+          <button class="btn" type="button" id="cloneItemBtn">Klonuj</button>
+          <button class="btn danger" type="button" id="deleteItemBtn">Usuń</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="locationDialog">
+  <div class="dialog-card">
+    <div class="dialog-head">
+      <strong id="locationDialogTitle">Lokalizacja</strong>
+      <button class="btn" onclick="locationDialog.close()">Zamknij</button>
+    </div>
+    <div class="dialog-body">
+      <form id="locationForm">
+        <input type="hidden" id="locationId" />
+        <div class="form-grid-4">
+          <input id="locationName" class="field full" placeholder="Nazwa lokalizacji" required />
+          <input id="locationRoom" class="field" placeholder="Pomieszczenie" />
+          <input id="locationShelf" class="field" placeholder="Regał / półka / szuflada" />
+          <input id="locationCode" class="field" placeholder="Kod (QR)" />
+        </div>
+        <textarea id="locationNote" class="field full" rows="3" placeholder="Notatka"></textarea>
+        <div class="mini" style="margin-top:12px">
+          <button class="btn primary" type="submit">Zapisz</button>
+          <button class="btn danger" type="button" id="deleteLocationBtn">Usuń</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="bundleDialog">
+  <div class="dialog-card">
+    <div class="dialog-head">
+      <strong id="bundleDialogTitle">Zestaw</strong>
+      <button class="btn" onclick="bundleDialog.close()">Zamknij</button>
+    </div>
+    <div class="dialog-body">
+      <form id="bundleForm">
+        <input type="hidden" id="bundleId" />
+        <div class="form-grid-3">
+          <input id="bundleName" class="field full" placeholder="Nazwa zestawu" required />
+          <textarea id="bundleDesc" class="field full" rows="3" placeholder="Opis zestawu"></textarea>
+        </div>
+        <div class="scan-box">
+          <strong>Elementy zestawu</strong>
+          <div id="bundleItemsArea" class="form-grid-3"></div>
+          <div class="help">Dodaj pozycje jako: przedmiot + ilość. To wystarczy, żeby widzieć czego brakuje.</div>
+        </div>
+        <textarea id="bundleNotes" class="field full" rows="3" placeholder="Notatki"></textarea>
+        <div class="mini" style="margin-top:12px">
+          <button class="btn primary" type="submit">Zapisz</button>
+          <button class="btn danger" type="button" id="deleteBundleBtn">Usuń</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="loanDialog">
+  <div class="dialog-card">
+    <div class="dialog-head">
+      <strong id="loanDialogTitle">Wypożyczenie</strong>
+      <button class="btn" onclick="loanDialog.close()">Zamknij</button>
+    </div>
+    <div class="dialog-body">
+      <form id="loanForm">
+        <input type="hidden" id="loanId" />
+        <div class="form-grid-3">
+          <input id="loanSubject" class="field" placeholder="Przedmiot / zestaw" required />
+          <input id="loanPerson" class="field" placeholder="Komu" required />
+          <input id="loanFrom" class="field" type="date" />
+          <input id="loanTo" class="field" type="date" required />
+          <select id="loanReturned" class="field">
+            <option value="false">Nie oddano</option>
+            <option value="true">Oddano</option>
+          </select>
+        </div>
+        <textarea id="loanNote" class="field full" rows="3" placeholder="Notatka"></textarea>
+        <div class="mini" style="margin-top:12px">
+          <button class="btn primary" type="submit">Zapisz</button>
+          <button class="btn danger" type="button" id="deleteLoanBtn">Usuń</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="saleDialog">
+  <div class="dialog-card">
+    <div class="dialog-head">
+      <strong id="saleDialogTitle">Sprzedaż</strong>
+      <button class="btn" onclick="saleDialog.close()">Zamknij</button>
+    </div>
+    <div class="dialog-body">
+      <form id="saleForm">
+        <input type="hidden" id="saleId" />
+        <div class="form-grid-3">
+          <input id="saleItem" class="field" placeholder="Przedmiot" required />
+          <input id="salePrice" class="field" type="number" min="0" step="0.01" placeholder="Cena" />
+          <input id="saleBuyer" class="field" placeholder="Kupujący" />
+          <select id="saleState" class="field">
+            <option value="offer">Oferta</option>
+            <option value="negotiation">Negocjacje</option>
+            <option value="reserved">Zarezerwowane</option>
+            <option value="sold">Sprzedane</option>
+          </select>
+        </div>
+        <textarea id="saleNote" class="field full" rows="3" placeholder="Notatka"></textarea>
+        <div class="mini" style="margin-top:12px">
+          <button class="btn primary" type="submit">Zapisz</button>
+          <button class="btn danger" type="button" id="deleteSaleBtn">Usuń</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="eventDialog">
+  <div class="dialog-card">
+    <div class="dialog-head">
+      <strong id="eventDialogTitle">Wydarzenie</strong>
+      <button class="btn" onclick="eventDialog.close()">Zamknij</button>
+    </div>
+    <div class="dialog-body">
+      <form id="eventForm">
+        <input type="hidden" id="eventId" />
+        <div class="form-grid-3">
+          <input id="eventTitle" class="field full" placeholder="Tytuł" required />
+          <input id="eventDate" class="field" type="datetime-local" required />
+          <input id="eventItem" class="field" placeholder="Powiązany przedmiot (opcjonalnie)" />
+        </div>
+        <textarea id="eventNote" class="field full" rows="3" placeholder="Notatka"></textarea>
+        <label class="mini" style="margin:10px 0 0">
+          <input type="checkbox" id="eventReminder" checked />
+          Przypomnienie
+        </label>
+        <div class="mini" style="margin-top:12px">
+          <button class="btn primary" type="submit">Zapisz</button>
+          <button class="btn danger" type="button" id="deleteEventBtn">Usuń</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="docDialog">
+  <div class="dialog-card">
+    <div class="dialog-head">
+      <strong id="docDialogTitle">Dokument</strong>
+      <button class="btn" onclick="docDialog.close()">Zamknij</button>
+    </div>
+    <div class="dialog-body">
+      <form id="docForm">
+        <input type="hidden" id="docId" />
+        <div class="form-grid-3">
+          <input id="docName" class="field full" placeholder="Nazwa dokumentu" required />
+          <input id="docType" class="field" placeholder="Typ" value="gwarancja" />
+          <select id="docLinkedType" class="field">
+            <option value="">Bez powiązania</option>
+            <option value="item">Przedmiot</option>
+            <option value="location">Lokalizacja</option>
+            <option value="bundle">Zestaw</option>
+          </select>
+          <input id="docLinkedId" class="field" placeholder="ID powiązania" />
+        </div>
+        <textarea id="docUrl" class="field full" rows="2" placeholder="Link, ścieżka lub opis"></textarea>
+        <textarea id="docNote" class="field full" rows="3" placeholder="Notatka"></textarea>
+        <div class="mini" style="margin-top:12px">
+          <button class="btn primary" type="submit">Zapisz</button>
+          <button class="btn danger" type="button" id="deleteDocBtn">Usuń</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="scanDialog">
+  <div class="dialog-card">
+    <div class="dialog-head">
+      <strong>📷 Skaner kodów</strong>
+      <button class="btn" id="closeScanBtn">✕ Zamknij</button>
+    </div>
+    <div class="dialog-body">
+      <div class="scan-box" style="margin-bottom:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+          <strong>🎥 Kamera na żywo</strong>
+          <span id="scanHttpsBadge" class="badge"></span>
+        </div>
+        <div id="scannerView" style="width:100%;border-radius:14px;overflow:hidden;background:rgba(0,0,0,.3);min-height:48px"></div>
+        <div class="mini" style="margin-top:8px">
+          <button class="btn primary" id="startScanBtn" style="flex:1">▶ Uruchom kamerę</button>
+          <button class="btn" id="stopScanBtn" style="display:none;flex:1">⏹ Zatrzymaj</button>
+        </div>
+        <div id="scanEngineInfo" class="small" style="margin-top:5px;color:var(--muted)"></div>
+      </div>
+      <div class="scan-box" style="border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.04);margin-bottom:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <strong>📸 Zdjęcie / galeria</strong>
+          <span class="badge" style="color:var(--accent)">✅ Zawsze działa</span>
+        </div>
+        <div class="mini">
+          <label class="btn primary" style="cursor:pointer;flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px">
+            📷 Aparat
+            <input type="file" id="scanPhotoInput" accept="image/*" capture="environment" style="display:none" />
+          </label>
+          <label class="btn" style="cursor:pointer;flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px">
+            🖼 Galeria
+            <input type="file" id="scanGalleryInput" accept="image/*" style="display:none" />
+          </label>
+        </div>
+        <canvas id="scanCanvas" style="display:none;width:100%;border-radius:10px;margin-top:8px;max-height:200px"></canvas>
+        <div id="scanPhotoStatus" class="small" style="margin-top:6px;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,.03)">Zrób zdjęcie lub wybierz z galerii.</div>
+      </div>
+      <div class="scan-box" style="border-color:rgba(139,92,246,.3);background:rgba(139,92,246,.04);margin-bottom:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <strong>🤖 Rozpoznaj przez AI</strong>
+          <span class="badge" style="color:#a78bfa">Claude Vision</span>
+        </div>
+        <div class="help" style="margin-bottom:8px">Zrób zdjęcie <b>czegokolwiek</b> — AI zidentyfikuje przedmiot i wypełni formularz. Klucz API w Ustawieniach.</div>
+        <div class="mini">
+          <label class="btn scan-ai-btn" style="cursor:pointer;flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px">
+            📷 Zdjęcie → AI
+            <input type="file" id="scanAIPhotoInput" accept="image/*" capture="environment" style="display:none" />
+          </label>
+          <label class="btn scan-ai-btn" style="cursor:pointer;flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px">
+            🖼 Galeria → AI
+            <input type="file" id="scanAIGalleryInput" accept="image/*" style="display:none" />
+          </label>
+        </div>
+        <div id="aiScanHint" class="small" style="margin-top:6px;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,.03)">
+          Zrób zdjęcie dowolnego przedmiotu — AI rozpozna go i zaproponuje dane do wpisania.
+        </div>
+      </div>
+      <div class="scan-box">
+        <strong>⌨️ Wpisz / czytnik USB</strong>
+        <div class="mini" style="margin-top:8px">
+          <input id="manualCode" class="field" placeholder="Wpisz lub skanuj kod" style="flex:1" autocomplete="off" inputmode="text" />
+          <button class="btn primary" id="manualSearchBtn">🔍</button>
+        </div>
+        <div class="mini" style="margin-top:8px">
+          <button class="btn" id="manualAddBtn" style="flex:1">⚡ Dodaj nowy z tym kodem</button>
+        </div>
+      </div>
+      <div id="scanStatus" class="small" style="margin-top:10px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.03)">Gotowe.</div>
+    </div>
+  </div>
+</dialog>
+<div id="h5qrHelper" style="display:none;visibility:hidden;position:absolute;left:-9999px;width:1px;height:1px"></div>
+
+<script>
+(() => {
+  const KEY = 'smart_magazyn_erp_state_v1';
+  const PREF = 'smart_magazyn_erp_pref_v1';
+  const VIEW_KEY = 'smart_magazyn_erp_view_v1';
+
+  const el = (id) => document.getElementById(id);
+  const uid = () => crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2);
+  const now = () => new Date();
+  const nowISO = () => now().toISOString();
+  const fmtMoney = (v) => new Intl.NumberFormat('pl-PL', { style:'currency', currency:'PLN' }).format(Number(v || 0));
+  const fmtDate = (v) => v ? new Date(v).toLocaleDateString('pl-PL') : '—';
+  const fmtDT = (v) => v ? new Date(v).toLocaleString('pl-PL', { dateStyle:'short', timeStyle:'short' }) : '—';
+  const pad = (n) => String(n).padStart(2,'0');
+  const toLocalInput = (iso) => {
+    const d = new Date(iso);
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+  const sameDay = (a,b) => a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+  const daysUntil = (date) => Math.ceil((new Date(date).setHours(0,0,0,0) - new Date().setHours(0,0,0,0)) / 86400000);
+
+  const escapeHTML = (str) => String(str ?? '').replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+  const normalize = (s) => String(s ?? '').toLowerCase().trim();
+
+  const defaultState = {
+    meta: { version: 1, updatedAt: nowISO(), deviceId: uid() },
+    settings: {
+      theme: 'matrix',
+      view: 'cards',
+      autoSave: 'on',
+      voice: true,
+      anthropicKey: '',
+      supabase: { enabled: false, url: '', key: '', table: 'smart_magazyn_state', rowId: 'main' }
+    },
+    locations: [
+      { id: uid(), name: 'Warsztat', room: 'Garaż', shelf: 'Regał A', code: 'LOC-001', note: 'Narzędzia i części' },
+      { id: uid(), name: 'Elektronika', room: 'Pokój', shelf: 'Szuflada 1', code: 'LOC-002', note: 'Płytki, przewody, złącza' },
+      { id: uid(), name: 'Dom', room: 'Kuchnia', shelf: 'Szafka', code: 'LOC-003', note: 'Rzeczy codzienne' }
+    ],
+    items: [
+      { id: uid(), name: 'Filtr oleju', description: 'Przykład. To powinno się znaleźć szybko po nazwie.', category: 'Auto', locationId: '', qty: 2, unit: 'szt', price: 39.99, minQty: 2, barcode: '590000000001', tags: ['do kupienia','auto'], photos: [], docs: [], checklist: ['Sprawdź kompatybilność'], needBuy: ['Dwie sztuki zapasu'], status: 'available', createdAt: nowISO(), updatedAt: nowISO() },
+      { id: uid(), name: 'Śruby M8', description: 'Woreczek roboczy', category: 'Mocowania', locationId: '', qty: 14, unit: 'szt', price: 0.8, minQty: 20, barcode: '', tags: ['metal'], photos: [], docs: [], checklist: ['Policz pojemnik'], needBuy: [], status: 'available', createdAt: nowISO(), updatedAt: nowISO() }
+    ],
+    bundles: [
+      { id: uid(), name: 'Dron E88', description: 'Zestaw serwisowy do drona', items: [{ itemId: '', qty: 1, name: 'Silnik', note: '' }], notes: 'Przykład zestawu', createdAt: nowISO(), updatedAt: nowISO() }
+    ],
+    loans: [],
+    sales: [],
+    events: [
+      { id: uid(), title: 'Przegląd sprzętu', date: new Date(Date.now()+86400000).toISOString(), reminder: true, itemId: '', note: 'Sprawdź terminy i braki', createdAt: nowISO() }
+    ],
+    docs: [],
+    trash: [],
+    history: [],
+    manualShopping: [],
+    savedViews: []
+  };
+
+  let state = loadState();
+  let ui = {
+    view: 'dashboard',
+    mode: localStorage.getItem(VIEW_KEY) || state.settings.view || 'cards',
+    sortDir: 'asc',
+    editing: { item: null, location: null, bundle: null, loan: null, sale: null, event: null, doc: null },
+    currentItemFilter: null,
+    filterHistoryOnlyItem: false,
+    scanner: { stream: null, timer: null, _zxReader: null }
+  };
+
+  const itemDialog = el('itemDialog');
+  const locationDialog = el('locationDialog');
+  const bundleDialog = el('bundleDialog');
+  const loanDialog = el('loanDialog');
+  const saleDialog = el('saleDialog');
+  const eventDialog = el('eventDialog');
+  const docDialog = el('docDialog');
+  const scanDialog = el('scanDialog');
+  const quickAddDialog = el('quickAddDialog');
+  const quickCountDialog = el('quickCountDialog');
+
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(KEY);
+      if(!raw) return structuredClone(defaultState);
+      const parsed = JSON.parse(raw);
+      return mergeDefaults(parsed, defaultState);
+    }catch{
+      return structuredClone(defaultState);
+    }
+  }
+
+  function mergeDefaults(src, def){
+    if(Array.isArray(def)) return Array.isArray(src) ? src : structuredClone(def);
+    if(def && typeof def === 'object'){
+      const out = {...def};
+      if(src && typeof src === 'object'){
+        for(const k of Object.keys(def)) out[k] = mergeDefaults(src[k], def[k]);
+      }
+      return out;
+    }
+    return src ?? def;
+  }
+
+  function saveState(reason='') {
+    state.meta.updatedAt = nowISO();
+    localStorage.setItem(KEY, JSON.stringify(state));
+    localStorage.setItem(PREF, JSON.stringify(state.settings));
+    renderForView(ui.view);
+    if(reason) toast(reason, 'success');
+    scheduleSupabaseSync();
+  }
+
+  function saveLocalOnly(){
+    state.meta.updatedAt = nowISO();
+    localStorage.setItem(KEY, JSON.stringify(state));
+    localStorage.setItem(PREF, JSON.stringify(state.settings));
+  }
+
+  function toast(message, type='success'){
+    const wrap = document.querySelector('.toast-wrap') || (() => {
+      const d = document.createElement('div');
+      d.className = 'toast-wrap';
+      document.body.appendChild(d);
+      return d;
+    })();
+    const n = document.createElement('div');
+    n.className = `toast ${type}`;
+    n.textContent = message;
+    wrap.appendChild(n);
+    setTimeout(() => n.remove(), 2600);
+  }
+
+  function pref(){ return state.settings; }
+
+  function addHistory(action, entityType, entityId, before, after){
+    state.history.unshift({
+      id: uid(),
+      ts: nowISO(),
+      action,
+      entityType,
+      entityId,
+      before: before ? structuredClone(before) : null,
+      after: after ? structuredClone(after) : null
+    });
+    state.history = state.history.slice(0, 400);
+  }
+
+  function removeById(arr, id){
+    const idx = arr.findIndex(x => x.id === id);
+    if(idx >= 0) return arr.splice(idx, 1)[0];
+    return null;
+  }
+
+  function getLocationName(id){
+    return state.locations.find(l => l.id === id)?.name || '—';
+  }
+
+  function getLocationLabel(id){
+    const l = state.locations.find(x => x.id === id);
+    if(!l) return '—';
+    return [l.name, l.room, l.shelf].filter(Boolean).join(' • ');
+  }
+
+  function itemStatus(item){
+    if(item.status === 'sold') return { text:'Sprzedany', cls:'status-bad' };
+    if(item.status === 'lost') return { text:'Zaginiony', cls:'status-bad' };
+    if(item.status === 'borrowed') return { text:'Wypożyczony', cls:'status-warn' };
+    if(item.status === 'in_repair') return { text:'W naprawie', cls:'status-warn' };
+    if(item.status === 'reserved') return { text:'Zarezerwowany', cls:'status-warn' };
+    if(Number(item.qty || 0) <= Number(item.minQty || 0) && Number(item.minQty || 0) > 0) return { text:'Niski stan', cls:'status-warn' };
+    return { text:'OK', cls:'status-ok' };
+  }
+
+  function itemSearchText(item){
+    return [
+      item.name, item.description, item.category, getLocationLabel(item.locationId),
+      item.barcode, (item.tags || []).join(' '), item.status
+    ].join(' ').toLowerCase();
+  }
+
+  function searchAll(query){
+    const q = normalize(query);
+    if(!q) return [];
+    const items = state.items.map(item => {
+      let score = 0;
+      const hay = itemSearchText(item);
+      if(hay.includes(q)) score += 6;
+      for(const t of q.split(/\s+/).filter(Boolean)){
+        if(hay.includes(t)) score += 2;
+      }
+      if(normalize(item.barcode) === q) score += 10;
+      if(score <= 0) return null;
+      return { type:'item', score, ref:item };
+    }).filter(Boolean);
+
+    const locs = state.locations.map(loc => {
+      const hay = [loc.name, loc.room, loc.shelf, loc.code, loc.note].join(' ').toLowerCase();
+      let score = 0;
+      if(hay.includes(q)) score += 4;
+      for(const t of q.split(/\s+/).filter(Boolean)){
+        if(hay.includes(t)) score += 1;
+      }
+      if(score <= 0) return null;
+      return { type:'location', score, ref:loc };
+    }).filter(Boolean);
+
+    const bundles = state.bundles.map(b => {
+      const hay = [b.name, b.description, b.notes].join(' ').toLowerCase();
+      let score = 0;
+      if(hay.includes(q)) score += 3;
+      for(const t of q.split(/\s+/).filter(Boolean)){
+        if(hay.includes(t)) score += 1;
+      }
+      if(score <= 0) return null;
+      return { type:'bundle', score, ref:b };
+    }).filter(Boolean);
+
+    return [...items, ...locs, ...bundles].sort((a,b)=>b.score-a.score).slice(0, 20);
+  }
+
+  function inventoryItemsFiltered(){
+    const q = normalize(el('filterSearch').value);
+    const cat = el('filterCategory').value;
+    const loc = el('filterLocation').value;
+    const st = el('filterStatus').value;
+    let list = [...state.items].filter(item => {
+      const hay = itemSearchText(item);
+      const ok = (!q || hay.includes(q))
+        && (!cat || item.category === cat)
+        && (!loc || item.locationId === loc)
+        && (!st || item.status === st);
+      return ok;
+    });
+    const key = el('sortBy').value;
+    list.sort((a,b) => {
+      let av = a[key], bv = b[key];
+      if(key === 'locationName'){ av = getLocationName(a.locationId); bv = getLocationName(b.locationId); }
+      if(key === 'expiryDate'){ av = a.expiryDate || ''; bv = b.expiryDate || ''; }
+      else if(['price','quantity','qty','minQty'].includes(key)){ av = Number(a[key] ?? a.qty ?? 0); bv = Number(b[key] ?? b.qty ?? 0); }
+      else { av = String(av ?? '').toLowerCase(); bv = String(bv ?? '').toLowerCase(); }
+      if(av < bv) return ui.sortDir === 'asc' ? -1 : 1;
+      if(av > bv) return ui.sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+    return list;
+  }
+
+  function openItem(item){
+    ui.editing.item = item?.id || null;
+    el('itemDialogTitle').textContent = item ? `Edytuj: ${item.name}` : 'Nowy przedmiot';
+    el('itemId').value = item?.id || '';
+    el('itemName').value = item?.name || '';
+    el('itemCategory').value = item?.category || '';
+    el('itemStatus').value = item?.status || 'available';
+    el('itemQty').value = item?.qty ?? 1;
+    el('itemUnit').value = item?.unit || 'szt';
+    el('itemPrice').value = item?.price ?? '';
+    el('itemMin').value = item?.minQty ?? '';
+    el('itemLocation').innerHTML = '<option value="">Brak</option>' + state.locations.map(l => `<option value="${l.id}">${escapeHTML(getLocationLabel(l.id))}</option>`).join('');
+    el('itemLocation').value = item?.locationId || '';
+    el('itemBarcode').value = item?.barcode || '';
+    el('itemDesc').value = item?.description || '';
+    el('itemTags').value = (item?.tags || []).join(', ');
+    el('itemPhotos').value = (item?.photos || []).join('\n');
+    el('itemChecklist').value = (item?.checklist || []).join('\n');
+    el('itemNeedBuy').value = (item?.needBuy || []).join('\n');
+    itemDialog.showModal();
+  }
+
+  function openLocation(loc){
+    ui.editing.location = loc?.id || null;
+    el('locationDialogTitle').textContent = loc ? `Edytuj: ${loc.name}` : 'Nowa lokalizacja';
+    el('locationId').value = loc?.id || '';
+    el('locationName').value = loc?.name || '';
+    el('locationRoom').value = loc?.room || '';
+    el('locationShelf').value = loc?.shelf || '';
+    el('locationCode').value = loc?.code || '';
+    el('locationNote').value = loc?.note || '';
+    locationDialog.showModal();
+  }
+
+  function openBundle(bundle){
+    ui.editing.bundle = bundle?.id || null;
+    el('bundleDialogTitle').textContent = bundle ? `Edytuj: ${bundle.name}` : 'Nowy zestaw';
+    el('bundleId').value = bundle?.id || '';
+    el('bundleName').value = bundle?.name || '';
+    el('bundleDesc').value = bundle?.description || '';
+    el('bundleNotes').value = bundle?.notes || '';
+    renderBundleItemsArea(bundle?.items || []);
+    bundleDialog.showModal();
+  }
+
+  function renderBundleItemsArea(items){
+    const area = el('bundleItemsArea');
+    const itemOptions = state.items.map(i => `<option value="${i.id}">${escapeHTML(i.name)}</option>`).join('');
+    const rows = (items.length ? items : [{ itemId:'', qty:1, name:'', note:'' }]).map((row, idx) => `
+      <div class="scan-box full" data-bundle-row="${idx}">
+        <strong>Pozycja ${idx+1}</strong>
+        <div class="form-grid-4">
+          <select class="field" data-bundle-item="${idx}"><option value="">Wybierz przedmiot</option>${itemOptions}</select>
+          <input class="field" data-bundle-name="${idx}" placeholder="Nazwa" value="${escapeHTML(row.name || '')}" />
+          <input class="field" data-bundle-qty="${idx}" type="number" min="0" step="1" value="${row.qty ?? 1}" placeholder="Ilość" />
+          <input class="field" data-bundle-note="${idx}" placeholder="Notatka" value="${escapeHTML(row.note || '')}" />
+        </div>
+      </div>
+    `).join('');
+    area.innerHTML = rows + `<button type="button" class="btn" id="addBundleRowInline">+ kolejna pozycja</button>`;
+    const selectEls = area.querySelectorAll('[data-bundle-item]');
+    selectEls.forEach(sel => sel.value = items[Number(sel.dataset.bundleItem)]?.itemId || '');
+    el('addBundleRowInline').onclick = () => {
+      const current = collectBundleRows();
+      current.push({ itemId:'', qty:1, name:'', note:'' });
+      renderBundleItemsArea(current);
+    };
+  }
+
+  function collectBundleRows(){
+    const rows = [];
+    document.querySelectorAll('[data-bundle-row]').forEach(row => {
+      const idx = row.dataset.bundleRow;
+      rows.push({
+        itemId: el(`bundleItemsArea`).querySelector(`[data-bundle-item="${idx}"]`)?.value || '',
+        qty: Number(el(`bundleItemsArea`).querySelector(`[data-bundle-qty="${idx}"]`)?.value || 1),
+        name: el(`bundleItemsArea`).querySelector(`[data-bundle-name="${idx}"]`)?.value.trim() || '',
+        note: el(`bundleItemsArea`).querySelector(`[data-bundle-note="${idx}"]`)?.value.trim() || ''
+      });
+    });
+    return rows.filter(x => x.itemId || x.name || x.note);
+  }
+
+  function openLoan(loan){
+    ui.editing.loan = loan?.id || null;
+    el('loanDialogTitle').textContent = loan ? `Edytuj: ${loan.subject}` : 'Nowe wypożyczenie';
+    el('loanId').value = loan?.id || '';
+    el('loanSubject').value = loan?.subject || '';
+    el('loanPerson').value = loan?.person || '';
+    el('loanFrom').value = loan?.from || '';
+    el('loanTo').value = loan?.to || '';
+    el('loanReturned').value = String(loan?.returned || false);
+    el('loanNote').value = loan?.note || '';
+    loanDialog.showModal();
+  }
+
+  function openSale(sale){
+    ui.editing.sale = sale?.id || null;
+    el('saleDialogTitle').textContent = sale ? `Edytuj: ${sale.itemName}` : 'Nowa sprzedaż';
+    el('saleId').value = sale?.id || '';
+    el('saleItem').value = sale?.itemName || '';
+    el('salePrice').value = sale?.price ?? '';
+    el('saleBuyer').value = sale?.buyer || '';
+    el('saleState').value = sale?.status || 'offer';
+    el('saleNote').value = sale?.note || '';
+    saleDialog.showModal();
+  }
+
+  function openEvent(ev){
+    ui.editing.event = ev?.id || null;
+    el('eventDialogTitle').textContent = ev ? `Edytuj: ${ev.title}` : 'Nowe wydarzenie';
+    el('eventId').value = ev?.id || '';
+    el('eventTitle').value = ev?.title || '';
+    el('eventDate').value = ev?.date ? toLocalInput(ev.date) : '';
+    el('eventItem').value = ev?.itemId || '';
+    el('eventNote').value = ev?.note || '';
+    el('eventReminder').checked = ev?.reminder ?? true;
+    eventDialog.showModal();
+  }
+
+  function openDoc(doc){
+    ui.editing.doc = doc?.id || null;
+    el('docDialogTitle').textContent = doc ? `Edytuj: ${doc.name}` : 'Nowy dokument';
+    el('docId').value = doc?.id || '';
+    el('docName').value = doc?.name || '';
+    el('docType').value = doc?.type || 'gwarancja';
+    el('docLinkedType').value = doc?.linkedType || '';
+    el('docLinkedId').value = doc?.linkedId || '';
+    el('docUrl').value = doc?.url || '';
+    el('docNote').value = doc?.note || '';
+    docDialog.showModal();
+  }
+
+  function buildItemForm(){
+    return {
+      id: el('itemId').value || uid(),
+      name: el('itemName').value.trim(),
+      description: el('itemDesc').value.trim(),
+      category: el('itemCategory').value.trim(),
+      locationId: el('itemLocation').value,
+      qty: Number(el('itemQty').value || 0),
+      unit: el('itemUnit').value.trim() || 'szt',
+      price: Number(el('itemPrice').value || 0),
+      minQty: Number(el('itemMin').value || 0),
+      barcode: el('itemBarcode').value.trim(),
+      tags: el('itemTags').value.split(',').map(s => s.trim()).filter(Boolean),
+      photos: el('itemPhotos').value.split('\n').map(s => s.trim()).filter(Boolean),
+      checklist: el('itemChecklist').value.split('\n').map(s => s.trim()).filter(Boolean),
+      needBuy: el('itemNeedBuy').value.split('\n').map(s => s.trim()).filter(Boolean),
+      status: el('itemStatus').value,
+      createdAt: state.items.find(x => x.id === el('itemId').value)?.createdAt || nowISO(),
+      updatedAt: nowISO()
+    };
+  }
+
+  function buildLocationForm(){
+    return {
+      id: el('locationId').value || uid(),
+      name: el('locationName').value.trim(),
+      room: el('locationRoom').value.trim(),
+      shelf: el('locationShelf').value.trim(),
+      code: el('locationCode').value.trim(),
+      note: el('locationNote').value.trim()
+    };
+  }
+
+  function buildBundleForm(){
+    return {
+      id: el('bundleId').value || uid(),
+      name: el('bundleName').value.trim(),
+      description: el('bundleDesc').value.trim(),
+      items: collectBundleRows(),
+      notes: el('bundleNotes').value.trim(),
+      createdAt: state.bundles.find(x => x.id === el('bundleId').value)?.createdAt || nowISO(),
+      updatedAt: nowISO()
+    };
+  }
+
+  function buildLoanForm(){
+    return {
+      id: el('loanId').value || uid(),
+      subject: el('loanSubject').value.trim(),
+      person: el('loanPerson').value.trim(),
+      from: el('loanFrom').value,
+      to: el('loanTo').value,
+      returned: el('loanReturned').value === 'true',
+      note: el('loanNote').value.trim(),
+      createdAt: state.loans.find(x => x.id === el('loanId').value)?.createdAt || nowISO(),
+      updatedAt: nowISO()
+    };
+  }
+
+  function buildSaleForm(){
+    return {
+      id: el('saleId').value || uid(),
+      itemName: el('saleItem').value.trim(),
+      price: Number(el('salePrice').value || 0),
+      buyer: el('saleBuyer').value.trim(),
+      status: el('saleState').value,
+      note: el('saleNote').value.trim(),
+      createdAt: state.sales.find(x => x.id === el('saleId').value)?.createdAt || nowISO(),
+      updatedAt: nowISO()
+    };
+  }
+
+  function buildEventForm(){
+    return {
+      id: el('eventId').value || uid(),
+      title: el('eventTitle').value.trim(),
+      date: new Date(el('eventDate').value).toISOString(),
+      itemId: el('eventItem').value.trim(),
+      note: el('eventNote').value.trim(),
+      reminder: el('eventReminder').checked,
+      createdAt: state.events.find(x => x.id === el('eventId').value)?.createdAt || nowISO(),
+      updatedAt: nowISO()
+    };
+  }
+
+  function buildDocForm(){
+    return {
+      id: el('docId').value || uid(),
+      name: el('docName').value.trim(),
+      type: el('docType').value.trim(),
+      linkedType: el('docLinkedType').value,
+      linkedId: el('docLinkedId').value.trim(),
+      url: el('docUrl').value.trim(),
+      note: el('docNote').value.trim(),
+      createdAt: state.docs.find(x => x.id === el('docId').value)?.createdAt || nowISO(),
+      updatedAt: nowISO()
+    };
+  }
+
+  function addOrUpdate(list, entity, label){
+    const idx = list.findIndex(x => x.id === entity.id);
+    const prev = idx >= 0 ? list[idx] : null;
+    if(idx >= 0) list[idx] = { ...(list[idx]), ...entity };
+    else list.unshift(entity);
+    addHistory(idx >= 0 ? `Aktualizacja ${label}` : `Dodano ${label}`, label, entity.id, prev, entity);
+  }
+
+  function deleteToTrash(list, id, label){
+    const removed = removeById(list, id);
+    if(!removed) return;
+    state.trash.unshift({ id: uid(), ts: nowISO(), type: label, payload: removed });
+    addHistory(`Usunięto ${label}`, label, id, removed, null);
+  }
+
+  function renderTopClock(){
+    const d = now();
+    el('clock').textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    el('bigClock').textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    el('bigDate').textContent = d.toLocaleDateString('pl-PL', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  }
+
+  function renderDashboard(){
+    const low = state.items.filter(i => Number(i.qty || 0) <= Number(i.minQty || 0) && Number(i.minQty || 0) > 0).length;
+    const borrowed = state.loans.filter(l => !l.returned).length + state.items.filter(i => i.status === 'borrowed').length;
+    const expSoon = state.items.filter(i => i.expiryDate && daysUntil(i.expiryDate) <= 7).length;
+    const totalValue = state.items.reduce((sum, i) => sum + Number(i.qty || 0) * Number(i.price || 0), 0);
+    const docs = state.docs.length;
+    const changes = state.history.length;
+
+    el('stats').innerHTML = [
+      ['Przedmioty', state.items.length, 'Wszystko w bazie', 'inventory'],
+      ['Niski stan', low, low > 0 ? '⚠️ Uzupełnij' : 'Stan OK', 'shopping'],
+      ['Wypożyczenia', borrowed, 'Aktywne pożyczki', 'loans'],
+      ['Ważność', expSoon, expSoon > 0 ? '⚠️ Do 7 dni' : 'Brak pilnych', 'inventory'],
+      ['Wartość stanu', fmtMoney(totalValue), 'Szacunkowo', ''],
+      ['Dokumenty', docs, 'Gwarancje / zdjęcia', 'docs']
+    ].map(([label, value, sub, view]) => `
+      <div class="stat${view ? ' stat-link' : ''}" ${view ? `data-navto="${view}"` : ''}>
+        <div class="label">${label}</div>
+        <div class="value">${value}</div>
+        <div class="sub">${sub}</div>
+        ${view ? '<div style="font-size:10px;color:var(--accent);margin-top:4px;opacity:.7">→ przejdź</div>' : ''}
+      </div>`).join('');
+
+    document.querySelectorAll('[data-navto]').forEach(s =>
+      s.addEventListener('click', () => switchView(s.dataset.navto))
+    );
+
+    el('todayBadge').textContent = `Dziś: ${state.events.filter(e => sameDay(new Date(e.date), new Date())).length} wydarzeń`;
+    el('lowBadge').textContent = `Braki: ${low}`;
+
+    el('recentList').innerHTML = [...state.items]
+      .sort((a,b)=>(b.updatedAt || b.createdAt || '').localeCompare(a.updatedAt || a.createdAt || ''))
+      .slice(0,8)
+      .map(item => `
+        <div class="list-item">
+          <div class="head">
+            <strong>${escapeHTML(item.name)}</strong>
+            <span class="badge">${itemStatus(item).text}</span>
+          </div>
+          <div class="small">${escapeHTML(getLocationLabel(item.locationId) || '—')} • ${fmtDate(item.updatedAt || item.createdAt)}</div>
+        </div>`).join('') || '<div class="small">Brak danych.</div>';
+
+    const agenda = [...state.events].sort((a,b)=>new Date(a.date)-new Date(b.date)).slice(0,6);
+    el('miniAgenda').innerHTML = agenda.map(ev => `
+      <div class="event">
+        <div class="date">${fmtDT(ev.date)}</div>
+        <div class="title"><b>${escapeHTML(ev.title)}</b></div>
+        <div class="small">${escapeHTML(ev.note || '')}</div>
+      </div>`).join('') || '<div class="small">Brak terminów.</div>';
+  }
+
+  function renderInventory(){
+    const items = inventoryItemsFiltered();
+    const cards = el('inventoryCards');
+    const table = el('inventoryTable');
+    cards.innerHTML = '';
+    table.innerHTML = '';
+
+    items.forEach(item => {
+      const stat = itemStatus(item);
+      const tags = (item.tags || []).slice(0,5).map(t => `<span class="tag">${escapeHTML(t)}</span>`).join('');
+      const card = document.createElement('div');
+      card.className = 'item-card';
+      card.innerHTML = `
+        <div class="item-top">
+          <div>
+            <h3 class="item-title">${escapeHTML(item.name || 'Bez nazwy')}</h3>
+            <div class="meta">${escapeHTML(item.category || '—')} • ${escapeHTML(getLocationLabel(item.locationId) || '—')}</div>
+          </div>
+          <span class="pill ${stat.cls}">${stat.text}</span>
+        </div>
+        <div class="meta" style="margin-top:8px">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <div>
+              Stan: <span class="qty-cell" data-qtyedit="${item.id}" title="Kliknij aby edytować">${item.qty ?? 0} <span style="font-size:11px;font-weight:400">${escapeHTML(item.unit || 'szt')}</span></span>
+            </div>
+            <div>Cena: <b>${fmtMoney(item.price || 0)}</b></div>
+            ${item.minQty > 0 ? `<div>Min: <b>${item.minQty}</b></div>` : ''}
+            ${item.expiryDate ? `<div style="color:${daysUntil(item.expiryDate)<=7?'var(--warn)':'inherit'}">Ważność: <b>${fmtDate(item.expiryDate)}</b></div>` : ''}
+          </div>
+        </div>
+        <div class="tags">${tags}</div>
+        <div class="mini" style="margin-top:8px">
+          ${item.barcode ? `<span class="pill mono" style="font-size:11px">#${escapeHTML(item.barcode)}</span>` : ''}
+          ${(item.photos || []).length ? `<span class="pill">📷 ${item.photos.length}</span>` : ''}
+        </div>
+        <div class="card-actions">
+          <button class="btn" data-edititem="${item.id}">✏️ Edytuj</button>
+          <button class="btn" data-plus="${item.id}" title="+1">+1</button>
+          <button class="btn" data-minus="${item.id}" title="-1">-1</button>
+          <button class="btn" data-where="${item.id}" title="Gdzie jest?">📍</button>
+        </div>
+      `;
+      cards.appendChild(card);
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><b>${escapeHTML(item.name)}</b><div class="small">${escapeHTML(item.description || '')}</div></td>
+        <td>${escapeHTML(item.category || '')}</td>
+        <td>${escapeHTML(getLocationLabel(item.locationId) || '')}</td>
+        <td>${item.qty ?? 0} ${escapeHTML(item.unit || '')}</td>
+        <td>${fmtMoney(item.price || 0)}</td>
+        <td>${item.minQty ?? 0}</td>
+        <td>${item.expiryDate ? fmtDate(item.expiryDate) : '—'}</td>
+        <td>${(item.tags || []).map(t => `<span class="badge">${escapeHTML(t)}</span>`).join(' ')}</td>
+        <td><span class="pill ${stat.cls}">${stat.text}</span></td>
+        <td>
+          <div class="mini">
+            <button class="btn" data-edititem="${item.id}">Edytuj</button>
+            <button class="btn" data-plus="${item.id}">+1</button>
+            <button class="btn" data-minus="${item.id}">-1</button>
+          </div>
+        </td>`;
+      table.appendChild(tr);
+    });
+    hookItemActions();
+  }
+
+  function renderLocations(){
+    const grid = el('locationGrid');
+    const list = el('locationSummary');
+    grid.innerHTML = '';
+    list.innerHTML = '';
+    state.locations.forEach(loc => {
+      const items = state.items.filter(i => i.locationId === loc.id);
+      const card = document.createElement('div');
+      card.className = 'map-card';
+      card.innerHTML = `
+        <div class="item-top">
+          <div>
+            <h3 class="item-title">${escapeHTML(loc.name)}</h3>
+            <div class="small">${escapeHTML(loc.room || '—')} • ${escapeHTML(loc.shelf || '—')}</div>
+          </div>
+          <span class="badge mono">${escapeHTML(loc.code || 'brak')}</span>
+        </div>
+        <div class="meta">${escapeHTML(loc.note || '')}</div>
+        <div class="mini" style="margin-top:10px">
+          <span class="pill">${items.length} sztuk</span>
+          <button class="btn" data-editloc="${loc.id}">Edytuj</button>
+          <button class="btn" data-searchloc="${loc.id}">Pokaż rzeczy</button>
+        </div>
+      `;
+      grid.appendChild(card);
+
+      list.innerHTML += `
+        <div class="list-item">
+          <div class="head">
+            <strong>${escapeHTML(loc.name)}</strong>
+            <span class="badge">${items.length}</span>
+          </div>
+          <div class="small">${escapeHTML(loc.room || '—')} • ${escapeHTML(loc.shelf || '—')}</div>
+          <div class="small">${escapeHTML(items.slice(0,4).map(x => x.name).join(', ') || 'brak rzeczy')}</div>
+        </div>`;
+    });
+    document.querySelectorAll('[data-editloc]').forEach(btn => btn.onclick = () => openLocation(state.locations.find(x => x.id === btn.dataset.editloc)));
+    document.querySelectorAll('[data-searchloc]').forEach(btn => btn.onclick = () => {
+      const loc = state.locations.find(x => x.id === btn.dataset.searchloc);
+      if(!loc) return;
+      ui.view = 'inventory';
+      switchView('inventory');
+      el('filterLocation').value = loc.id;
+      renderForView('inventory');
+    });
+    fillItemLocationSelect();
+  }
+
+  function renderBundles(){
+    const grid = el('bundleGrid');
+    const side = el('bundleSideList');
+    grid.innerHTML = '';
+    side.innerHTML = '';
+    state.bundles.forEach(bundle => {
+      const resolved = (bundle.items || []).map(row => {
+        const item = state.items.find(i => i.id === row.itemId);
+        return {
+          title: row.name || item?.name || 'Bez nazwy',
+          need: Number(row.qty || 0),
+          have: Number(item?.qty || 0),
+          note: row.note || ''
+        };
+      });
+      const missing = resolved.reduce((sum, r) => sum + Math.max(0, r.need - r.have), 0);
+      const card = document.createElement('div');
+      card.className = 'item-card';
+      card.innerHTML = `
+        <div class="item-top">
+          <div>
+            <h3 class="item-title">${escapeHTML(bundle.name)}</h3>
+            <div class="small">${escapeHTML(bundle.description || '')}</div>
+          </div>
+          <span class="pill ${missing ? 'status-warn' : 'status-ok'}">${missing ? `Brakuje ${missing}` : 'Komplet'}</span>
+        </div>
+        <div class="meta">${escapeHTML(bundle.notes || '')}</div>
+        <div class="actions">
+          <button class="btn" data-editbundle="${bundle.id}">Edytuj</button>
+          <button class="btn" data-usebundle="${bundle.id}">Pokaż skład</button>
+        </div>
+      `;
+      grid.appendChild(card);
+      side.innerHTML += `
+        <div class="list-item">
+          <div class="head"><strong>${escapeHTML(bundle.name)}</strong><span class="badge">${(bundle.items || []).length}</span></div>
+          <div class="small">${escapeHTML(resolved.map(r => `${r.title} x${r.need}`).join(' • ') || 'brak pozycji')}</div>
+        </div>`;
+    });
+    document.querySelectorAll('[data-editbundle]').forEach(btn => btn.onclick = () => openBundle(state.bundles.find(x => x.id === btn.dataset.editbundle)));
+    document.querySelectorAll('[data-usebundle]').forEach(btn => btn.onclick = () => {
+      const bundle = state.bundles.find(x => x.id === btn.dataset.usebundle);
+      if(!bundle) return;
+      ui.currentItemFilter = bundle.name;
+      ui.view = 'inventory';
+      switchView('inventory');
+      el('filterSearch').value = bundle.name;
+      renderForView('inventory');
+    });
+  }
+
+  function renderLoansSales(){
+    const loanList = el('loanList');
+    const saleList = el('saleList');
+    const reminderList = el('loanReminderList');
+    loanList.innerHTML = '';
+    saleList.innerHTML = '';
+    reminderList.innerHTML = '';
+    state.loans.sort((a,b)=>(a.returned===b.returned ? String(a.to).localeCompare(String(b.to)) : Number(a.returned) - Number(b.returned))).forEach(loan => {
+      const overdue = !loan.returned && loan.to && new Date(loan.to) < new Date();
+      loanList.innerHTML += `
+        <div class="list-item">
+          <div class="head">
+            <strong>${escapeHTML(loan.subject)}</strong>
+            <span class="badge ${overdue ? 'status-bad' : loan.returned ? 'status-ok' : 'status-warn'}">${loan.returned ? 'oddano' : overdue ? 'po terminie' : 'aktywny'}</span>
+          </div>
+          <div class="small">${escapeHTML(loan.person)} • od ${escapeHTML(loan.from || '—')} do ${escapeHTML(loan.to || '—')}</div>
+          <div class="small">${escapeHTML(loan.note || '')}</div>
+          <div class="mini">
+            <button class="btn" data-editloan="${loan.id}">Edytuj</button>
+            <button class="btn danger" data-delloan="${loan.id}">Usuń</button>
+          </div>
+        </div>`;
+      if(overdue || !loan.returned){
+        reminderList.innerHTML += `
+          <div class="list-item">
+            <div class="head"><strong>${escapeHTML(loan.subject)}</strong><span class="badge">${escapeHTML(loan.person)}</span></div>
+            <div class="small">${overdue ? 'Termin minął' : 'Do oddania'}</div>
+          </div>`;
+      }
+    });
+
+    state.sales.forEach(sale => {
+      saleList.innerHTML += `
+        <div class="list-item">
+          <div class="head"><strong>${escapeHTML(sale.itemName)}</strong><span class="badge">${escapeHTML(sale.status)}</span></div>
+          <div class="small">${escapeHTML(sale.buyer || '—')} • ${fmtMoney(sale.price || 0)}</div>
+          <div class="small">${escapeHTML(sale.note || '')}</div>
+          <div class="mini">
+            <button class="btn" data-editsale="${sale.id}">Edytuj</button>
+            <button class="btn danger" data-delsale="${sale.id}">Usuń</button>
+          </div>
+        </div>`;
+    });
+
+    document.querySelectorAll('[data-editloan]').forEach(btn => btn.onclick = () => openLoan(state.loans.find(x => x.id === btn.dataset.editloan)));
+    document.querySelectorAll('[data-delloan]').forEach(btn => btn.onclick = () => {
+      const idx = state.loans.findIndex(x => x.id === btn.dataset.delloan);
+      if(idx < 0) return;
+      const removed = state.loans[idx];
+      state.loans.splice(idx, 1);
+      state.trash.unshift({ id: uid(), ts: nowISO(), type:'loan', payload: removed });
+      addHistory('Usunięto wypożyczenie', 'loan', removed.id, removed, null);
+      saveState();
+    });
+    document.querySelectorAll('[data-editsale]').forEach(btn => btn.onclick = () => openSale(state.sales.find(x => x.id === btn.dataset.editsale)));
+    document.querySelectorAll('[data-delsale]').forEach(btn => btn.onclick = () => {
+      const idx = state.sales.findIndex(x => x.id === btn.dataset.delsale);
+      if(idx < 0) return;
+      const removed = state.sales[idx];
+      state.sales.splice(idx, 1);
+      state.trash.unshift({ id: uid(), ts: nowISO(), type:'sale', payload: removed });
+      addHistory('Usunięto sprzedaż', 'sale', removed.id, removed, null);
+      saveState();
+    });
+  }
+
+  function renderCalendar(){
+    const today = new Date();
+    const future = new Date(today.getTime() + 7*86400000);
+    const todayEvents = state.events.filter(e => sameDay(new Date(e.date), today)).sort((a,b)=>new Date(a.date)-new Date(b.date));
+    const futureEvents = state.events.filter(e => {
+      const d = new Date(e.date);
+      return d > today && d <= future;
+    }).sort((a,b)=>new Date(a.date)-new Date(b.date));
+    el('todayEvents').innerHTML = todayEvents.map(renderEventCard).join('') || '<div class="small">Dziś brak wydarzeń.</div>';
+    el('futureEvents').innerHTML = futureEvents.map(renderEventCard).join('') || '<div class="small">Brak wydarzeń w 7 dni.</div>';
+    el('reminderList').innerHTML = state.events.filter(e => e.reminder).sort((a,b)=>new Date(a.date)-new Date(b.date)).map(ev => `
+      <div class="list-item">
+        <div class="head"><strong>${escapeHTML(ev.title)}</strong><span class="badge">${fmtDT(ev.date)}</span></div>
+        <div class="small">${escapeHTML(ev.note || '')}</div>
+      </div>`).join('') || '<div class="small">Brak przypomnień.</div>';
+  }
+
+  function renderEventCard(ev){
+    const d = new Date(ev.date);
+    const badge = d < new Date() ? 'status-bad' : (daysUntil(ev.date) <= 2 ? 'status-warn' : 'status-ok');
+    return `
+      <div class="event">
+        <div class="head mini">
+          <span class="badge ${badge}">${fmtDT(ev.date)}</span>
+          <button class="btn" data-editevent="${ev.id}">Edytuj</button>
+        </div>
+        <div class="title"><b>${escapeHTML(ev.title)}</b></div>
+        <div class="small">${escapeHTML(ev.note || '')}</div>
+        <div class="small">${ev.itemId ? 'Powiązany: ' + escapeHTML(state.items.find(x=>x.id===ev.itemId)?.name || ev.itemId) : ''}</div>
+      </div>`;
+  }
+
+  function renderShopping(){
+    const auto = state.items
+      .filter(i => (Number(i.qty || 0) <= Number(i.minQty || 0) && Number(i.minQty || 0) > 0) || (i.tags || []).some(t => normalize(t) === 'do kupienia'))
+      .map(i => ({
+        title: i.name,
+        detail: `Stan ${i.qty || 0}/${i.minQty || 0} • ${getLocationLabel(i.locationId) || '—'}`
+      }));
+
+    const manual = (state.manualShopping || []).map(x => ({ title:x, detail:'Dodane ręcznie' }));
+    const list = [...auto, ...manual];
+    el('shoppingList').innerHTML = list.map((x, idx) => `
+      <div class="list-item">
+        <div class="head"><strong>${escapeHTML(x.title)}</strong><button class="btn" data-delshop="${idx}">Usuń</button></div>
+        <div class="small">${escapeHTML(x.detail)}</div>
+      </div>`).join('') || '<div class="small">Lista pusta.</div>';
+
+    const tips = [
+      `Wartość stanu: ${fmtMoney(state.items.reduce((s,i)=>s + Number(i.qty || 0) * Number(i.price || 0), 0))}`,
+      `Przedmiotów z niskim stanem: ${auto.length}`,
+      `Masz lokalizacji: ${state.locations.length}`,
+      `Masz dokumentów: ${state.docs.length}`,
+      `Masz historii zmian: ${state.history.length}`
+    ];
+    el('shoppingTips').innerHTML = tips.map(t => `<div class="list-item"><div class="head"><strong>${escapeHTML(t)}</strong></div></div>`).join('');
+    document.querySelectorAll('[data-delshop]').forEach(btn => btn.onclick = () => {
+      state.manualShopping = (state.manualShopping || []).filter((_, i) => i !== Number(btn.dataset.delshop));
+      addHistory('Usunięto ręczny wpis z zakupów', 'shopping', btn.dataset.delshop, null, null);
+      saveState();
+    });
+  }
+
+  function renderDocs(){
+    const list = el('docList');
+    list.innerHTML = '';
+    state.docs.forEach(doc => {
+      list.innerHTML += `
+        <div class="list-item">
+          <div class="head">
+            <strong>${escapeHTML(doc.name)}</strong>
+            <span class="badge">${escapeHTML(doc.type || 'plik')}</span>
+          </div>
+          <div class="small">${doc.linkedType ? escapeHTML(doc.linkedType + ': ' + doc.linkedId) : 'bez powiązania'}</div>
+          <div class="small">${escapeHTML(doc.url || '')}</div>
+          <div class="mini">
+            <button class="btn" data-editdoc="${doc.id}">Edytuj</button>
+            <button class="btn danger" data-deldoc="${doc.id}">Usuń</button>
+          </div>
+        </div>`;
+    });
+    el('docTips').innerHTML = [
+      `Najlepiej trzymaj: gwarancje, paragony, zdjęcia i instrukcje.`,
+      `Dokumenty możesz przypinać do przedmiotów, lokalizacji i zestawów.`,
+      `Na telefonie masz to pod ręką bez szukania w galerii albo w mailach.`
+    ].map(x => `<div class="list-item"><div class="head"><strong>${escapeHTML(x)}</strong></div></div>`).join('');
+    document.querySelectorAll('[data-editdoc]').forEach(btn => btn.onclick = () => openDoc(state.docs.find(x => x.id === btn.dataset.editdoc)));
+    document.querySelectorAll('[data-deldoc]').forEach(btn => btn.onclick = () => {
+      const idx = state.docs.findIndex(x => x.id === btn.dataset.deldoc);
+      if(idx < 0) return;
+      const removed = state.docs[idx];
+      state.docs.splice(idx, 1);
+      state.trash.unshift({ id: uid(), ts: nowISO(), type:'doc', payload: removed });
+      addHistory('Usunięto dokument', 'doc', removed.id, removed, null);
+      saveState();
+    });
+  }
+
+  function renderHistory(){
+    const list = el('historyList');
+    const trash = el('trashList');
+    list.innerHTML = '';
+    const hist = state.history.slice(0, 80).filter(h => !ui.filterHistoryOnlyItem || h.entityType === 'item');
+    list.innerHTML = hist.map(h => `
+      <div class="list-item">
+        <div class="head">
+          <strong>${escapeHTML(h.action)}</strong>
+          <span class="badge">${fmtDT(h.ts)}</span>
+        </div>
+        <div class="small">${escapeHTML(h.entityType)} • ${escapeHTML(h.entityId || '')}</div>
+      </div>`).join('') || '<div class="small">Brak historii.</div>';
+
+    trash.innerHTML = state.trash.slice(0,80).map(t => `
+      <div class="list-item">
+        <div class="head">
+          <strong>${escapeHTML(t.type)}</strong>
+          <span class="badge">${fmtDT(t.ts)}</span>
+        </div>
+        <div class="small">${escapeHTML(t.payload?.name || t.payload?.subject || t.payload?.title || t.payload?.itemName || '—')}</div>
+        <div class="mini">
+          <button class="btn" data-restore="${t.id}">Przywróć</button>
+        </div>
+      </div>`).join('') || '<div class="small">Kosz pusty.</div>';
+
+    el('historyStats').innerHTML = [
+      ['Rzeczy', state.items.length],
+      ['Lokalizacje', state.locations.length],
+      ['Zestawy', state.bundles.length],
+      ['Wypożyczenia', state.loans.length],
+      ['Sprzedaże', state.sales.length],
+      ['Dokumenty', state.docs.length]
+    ].map(([a,b]) => `<div class="list-item"><div class="head"><strong>${a}</strong><span class="badge">${b}</span></div></div>`).join('');
+
+    document.querySelectorAll('[data-restore]').forEach(btn => btn.onclick = () => {
+      const idx = state.trash.findIndex(x => x.id === btn.dataset.restore);
+      if(idx < 0) return;
+      const entry = state.trash.splice(idx, 1)[0];
+      const p = entry.payload;
+      if(entry.type === 'item') state.items.unshift(p);
+      else if(entry.type === 'location') state.locations.unshift(p);
+      else if(entry.type === 'bundle') state.bundles.unshift(p);
+      else if(entry.type === 'loan') state.loans.unshift(p);
+      else if(entry.type === 'sale') state.sales.unshift(p);
+      else if(entry.type === 'event') state.events.unshift(p);
+      else if(entry.type === 'doc') state.docs.unshift(p);
+      addHistory('Przywrócono z kosza', entry.type, p.id || '', null, p);
+      saveState();
+    });
+  }
+
+  function renderSettings(){
+    el('prefView').value = state.settings.view || 'cards';
+    el('prefTheme').value = state.settings.theme || 'matrix';
+    el('prefAutoSave').value = state.settings.autoSave || 'on';
+    el('sbEnabled').checked = !!state.settings.supabase.enabled;
+    el('sbUrl').value = state.settings.supabase.url || '';
+    el('sbKey').value = state.settings.supabase.key || '';
+    el('sbTable').value = state.settings.supabase.table || 'smart_magazyn_state';
+    el('sbRowId').value = state.settings.supabase.rowId || 'main';
+    // Anthropic key — pokaż tylko czy jest ustawiony (nie ujawniaj wartości)
+    const hasKey = !!state.settings.anthropicKey;
+    const keyStatus = el('anthropicKeyStatus');
+    if(keyStatus){
+      keyStatus.textContent = hasKey ? '✅ Klucz API jest ustawiony.' : 'Brak klucza — rozpoznawanie AI niedostępne.';
+      keyStatus.style.color = hasKey ? 'var(--accent)' : 'var(--muted)';
+    }
+    if(hasKey && el('anthropicKeyInput')) el('anthropicKeyInput').placeholder = '••••••••••••••••••••••• (zapisany)';
+    el('settingsStats').innerHTML = [
+      ['Auto zapis', state.settings.autoSave === 'on' ? 'tak' : 'nie'],
+      ['Tryb widoku', state.settings.view],
+      ['Motyw', state.settings.theme],
+      ['Sync', state.settings.supabase.enabled ? 'włączony' : 'wyłączony'],
+      ['Urządzenie', state.meta.deviceId.slice(0,8)],
+      ['Ostatnia zmiana', fmtDT(state.meta.updatedAt)]
+    ].map(([a,b]) => `<div class="list-item"><div class="head"><strong>${escapeHTML(a)}</strong><span class="badge">${escapeHTML(String(b))}</span></div></div>`).join('');
+  }
+
+  function fillItemLocationSelect(){
+    const sel = el('itemLocation');
+    const current = sel.value;
+    sel.innerHTML = '<option value="">Brak</option>' + state.locations.map(l => `<option value="${l.id}">${escapeHTML(getLocationLabel(l.id))}</option>`).join('');
+    sel.value = current;
+  }
+
+  function fillFilters(){
+    const categories = [...new Set(state.items.map(i => i.category).filter(Boolean))].sort();
+    const locations = [...new Set(state.items.map(i => i.locationId).filter(Boolean))].sort();
+    const catSel = el('filterCategory');
+    const locSel = el('filterLocation');
+    const saved = el('savedViews');
+    const catCurrent = catSel.value;
+    const locCurrent = locSel.value;
+    catSel.innerHTML = '<option value="">Kategoria</option>' + categories.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join('');
+    locSel.innerHTML = '<option value="">Lokalizacja</option>' + state.locations.map(l => `<option value="${l.id}">${escapeHTML(getLocationLabel(l.id))}</option>`).join('');
+    catSel.value = categories.includes(catCurrent) ? catCurrent : '';
+    locSel.value = locations.includes(locCurrent) ? locCurrent : '';
+    saved.innerHTML = '<option value="">Zakładki filtrów</option>' + (state.savedViews || []).map((v,i) => `<option value="${i}">${escapeHTML(v.name)}</option>`).join('');
+    fillItemLocationSelect();
+  }
+
+  function renderAll(){
+    renderTopClock();
+    renderDashboard();
+    fillFilters();
+    renderInventory();
+    renderLocations();
+    renderBundles();
+    renderLoansSales();
+    renderCalendar();
+    renderShopping();
+    renderDocs();
+    renderHistory();
+    renderSettings();
+    syncViewModeUI();
+    updateNavBadges();
+  }
+
+  function renderForView(view){
+    renderTopClock();
+    updateNavBadges();
+    switch(view){
+      case 'dashboard':  renderDashboard(); break;
+      case 'inventory':  fillFilters(); renderInventory(); syncViewModeUI(); break;
+      case 'locations':  renderLocations(); break;
+      case 'bundles':    renderBundles(); break;
+      case 'loans':      renderLoansSales(); break;
+      case 'calendar':   renderCalendar(); break;
+      case 'shopping':   renderShopping(); break;
+      case 'docs':       renderDocs(); break;
+      case 'history':    renderHistory(); break;
+      case 'settings':   renderSettings(); break;
+      default:           renderAll();
+    }
+  }
+
+  function updateNavBadges(){
+    // Zakupy badge
+    const needBuy = state.items.filter(i =>
+      (Number(i.qty||0) <= Number(i.minQty||0) && Number(i.minQty||0) > 0) ||
+      (i.tags||[]).some(t => normalize(t) === 'do kupienia')
+    ).length + (state.manualShopping||[]).length;
+    _setBadge('[data-navview="shopping"]', needBuy, '');
+
+    // Magazyn badge (niski stan)
+    const lowStock = state.items.filter(i => Number(i.qty||0) <= Number(i.minQty||0) && Number(i.minQty||0) > 0).length;
+    _setBadge('[data-navview="inventory"]', lowStock, 'warn');
+  }
+
+  function _setBadge(selector, count, type){
+    const btn = document.querySelector(selector);
+    if(!btn) return;
+    let badge = btn.querySelector('.nav-badge');
+    if(count > 0){
+      if(!badge){ badge = document.createElement('span'); badge.className = 'nav-badge'; btn.appendChild(badge); }
+      badge.textContent = count > 99 ? '99+' : count;
+      badge.className = 'nav-badge' + (type ? ' '+type : '');
+    } else if(badge){
+      badge.remove();
+    }
+  }
+
+  function syncViewModeUI(){
+    const cardsVisible = ui.mode === 'cards';
+    el('toggleViewBtn').textContent = cardsVisible ? 'Tabela' : 'Karty';
+    el('inventoryCards').classList.toggle('hidden', !cardsVisible);
+    el('inventoryTableWrap').classList.toggle('hidden', cardsVisible);
+    localStorage.setItem(VIEW_KEY, ui.mode);
+    state.settings.view = ui.mode;
+  }
+
+  function setTheme(theme){
+    document.body.setAttribute('data-theme', theme);
+    state.settings.theme = theme;
+    el('themeSel').value = theme;
+    el('prefTheme').value = theme;
+    saveLocalOnly();
+  }
+
+  function switchView(name){
+    ui.view = name;
+    document.querySelectorAll('.view').forEach(v => v.classList.add('hidden'));
+    el(`view-${name}`).classList.remove('hidden');
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.view === name));
+    document.querySelectorAll('[data-navview]').forEach(b => b.classList.toggle('active', b.dataset.navview === name));
+    renderForView(name);
+  }
+
+  function copyText(text){
+    navigator.clipboard?.writeText(text);
+  }
+
+  function shoppingText(){
+    const auto = state.items.filter(i => (Number(i.qty || 0) <= Number(i.minQty || 0) && Number(i.minQty || 0) > 0) || (i.tags || []).some(t => normalize(t) === 'do kupienia'));
+    return auto.map(i => `${i.name} — stan ${i.qty || 0}/${i.minQty || 0} — ${getLocationLabel(i.locationId) || ''}`).join('\n') || 'Brak rzeczy do kupienia.';
+  }
+
+  function exportJson(){
+    const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `smart_magazyn_backup_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function exportCsv(){
+    const lines = ['name,category,location,qty,unit,price,minQty,barcode,status'];
+    state.items.forEach(i => {
+      lines.push([
+        i.name, i.category, getLocationLabel(i.locationId), i.qty, i.unit, i.price, i.minQty, i.barcode, i.status
+      ].map(v => `"${String(v ?? '').replace(/"/g,'""')}"`).join(','));
+    });
+    const blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `smart_magazyn_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function importJsonFile(file){
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const incoming = JSON.parse(String(reader.result));
+        if(!incoming || typeof incoming !== 'object' || !incoming.items || !incoming.locations){
+          toast('❌ To nie jest plik Smart Magazyn — nieprawidłowy format', 'danger');
+          return;
+        }
+        state = mergeDefaults(incoming, defaultState);
+        saveLocalOnly();
+        renderAll();
+        toast(`Zaimportowano dane (${incoming.items?.length || 0} przedmiotów)`, 'success');
+      }catch(e){
+        toast('Błąd importu — plik uszkodzony lub zły format', 'danger');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function renderPrintCodes(){
+    const labels = state.locations.map(l => `${l.code || ''} | ${l.name} | ${getLocationLabel(l.id)}`);
+    const text = labels.join('\n');
+    copyText(text);
+    toast('Skopiowano kody lokalizacji', 'success');
+  }
+
+  function changeQty(id, delta){
+    const item = state.items.find(x => x.id === id);
+    if(!item) return;
+    const before = structuredClone(item);
+    item.qty = Math.max(0, Number(item.qty || 0) + delta);
+    item.updatedAt = nowISO();
+    addHistory(delta > 0 ? 'Dodano stan' : 'Odjęto stan', 'item', item.id, before, item);
+    saveState();
+  }
+
+  function handleWhere(id){
+    const item = state.items.find(x => x.id === id);
+    if(!item) return;
+    const loc = getLocationLabel(item.locationId);
+    toast(`${item.name}: ${loc}`, 'success');
+    speak(`${item.name} jest w ${loc}`);
+  }
+
+  function speak(text){
+    try{
+      if('speechSynthesis' in window){
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'pl-PL';
+        speechSynthesis.cancel();
+        speechSynthesis.speak(u);
+      }
+    }catch{}
+  }
+
+  function runVoice(){
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SR){ toast('Brak obsługi głosu w tej przeglądarce', 'warn'); return; }
+    const rec = new SR();
+    rec.lang = 'pl-PL';
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+    rec.onstart = () => toast('Słucham...', 'success');
+    rec.onresult = (e) => {
+      const text = e.results[0][0].transcript.trim();
+      processVoiceCommand(text);
+    };
+    rec.onerror = () => toast('Głos nie ruszył', 'warn');
+    rec.start();
+  }
+
+  function processVoiceCommand(text){
+    const t = text.trim();
+    const addMatch = t.match(/^dodaj\s+(\d+)\s+(.+?)\s+do\s+(.+)$/i);
+    const subMatch = t.match(/^odejmij\s+(\d+)\s+(.+?)\s+z\s+(.+)$/i);
+    const whereMatch = t.match(/^(gdzie\s+jest|gdzie\s+mam|pokaż)\s+(.+)$/i);
+    const haveMatch = t.match(/^czy\s+mam\s+(.+)$/i);
+    const noteMatch = t.match(/^notatka\s+(.+)$/i);
+    if(addMatch){
+      const qty = Number(addMatch[1]);
+      const name = addMatch[2].trim();
+      const place = addMatch[3].trim();
+      addOrAdjustByVoice(name, qty, place);
+      return;
+    }
+    if(subMatch){
+      const qty = Number(subMatch[1]);
+      const name = subMatch[2].trim();
+      const place = subMatch[3].trim();
+      addOrAdjustByVoice(name, -qty, place);
+      return;
+    }
+    if(whereMatch){
+      findAndSpeak(whereMatch[2]);
+      return;
+    }
+    if(haveMatch){
+      findAndSpeak(haveMatch[1], true);
+      return;
+    }
+    if(noteMatch){
+      state.events.unshift({ id: uid(), title: 'Notatka głosowa', date: nowISO(), reminder: false, itemId: '', note: noteMatch[1].trim(), createdAt: nowISO() });
+      addHistory('Dodano notatkę głosową', 'event', state.events[0].id, null, state.events[0]);
+      saveState();
+      speak('Zapisałem notatkę');
+      return;
+    }
+    findAndSpeak(t);
+  }
+
+  function addOrAdjustByVoice(name, delta, placeText){
+    const item = state.items.find(i => normalize(i.name) === normalize(name)) || state.items.find(i => itemSearchText(i).includes(normalize(name)));
+    let loc = state.locations.find(l => normalize(getLocationLabel(l.id)).includes(normalize(placeText)) || normalize(l.code) === normalize(placeText) || normalize(l.name) === normalize(placeText));
+    if(!item){
+      const newItem = {
+        id: uid(),
+        name,
+        description: 'Dodane głosem',
+        category: '',
+        locationId: loc?.id || '',
+        qty: Math.max(0, delta),
+        unit: 'szt',
+        price: 0,
+        minQty: 0,
+        barcode: '',
+        tags: ['głos'],
+        photos: [],
+        docs: [],
+        checklist: [],
+        needBuy: [],
+        status: 'available',
+        createdAt: nowISO(),
+        updatedAt: nowISO()
+      };
+      state.items.unshift(newItem);
+      addHistory('Dodano przedmiot głosem', 'item', newItem.id, null, newItem);
+      saveState();
+      speak(`Dodałem ${name}`);
+      return;
+    }
+    const before = structuredClone(item);
+    item.qty = Math.max(0, Number(item.qty || 0) + delta);
+    if(loc) item.locationId = loc.id;
+    item.updatedAt = nowISO();
+    addHistory(delta >= 0 ? 'Dodano stan głosem' : 'Odjęto stan głosem', 'item', item.id, before, item);
+    saveState();
+    speak(`${item.name}, stan ${item.qty}`);
+  }
+
+  function findAndSpeak(query, checkOnly=false){
+    const results = searchAll(query);
+    if(!results.length){
+      const msg = checkOnly ? `Nie widzę ${query}` : `Nie znalazłem ${query}`;
+      toast(msg, 'warn');
+      speak(msg);
+      return;
+    }
+    const top = results[0];
+    if(top.type === 'item'){
+      const item = top.ref;
+      const where = getLocationLabel(item.locationId);
+      const msg = `${item.name}: ${checkOnly ? (item.qty > 0 ? 'tak, masz' : 'nie, nie masz') : `jest w ${where || 'brak lokalizacji'}`}`;
+      toast(msg, 'success');
+      speak(msg);
+      if(!checkOnly && ui.view !== 'inventory'){
+        switchView('inventory');
+        el('filterSearch').value = query;
+      }
+    } else if(top.type === 'location'){
+      const loc = top.ref;
+      const msg = `${loc.name}: ${loc.room || ''} ${loc.shelf || ''}`.trim();
+      toast(msg, 'success');
+      speak(msg);
+      if(ui.view !== 'locations'){
+        switchView('locations');
+      }
+    } else if(top.type === 'bundle'){
+      const bundle = top.ref;
+      const msg = `${bundle.name}`;
+      toast(msg, 'success');
+      speak(msg);
+      if(ui.view !== 'bundles'){
+        switchView('bundles');
+      }
+    }
+  }
+
+  // ============================================================
+  //  SKANER — html5-qrcode + BarcodeDetector (natywny)
+  // ============================================================
+
+  let _h5qrLib = null;
+  let _liveScanner = null;
+
+  function loadH5QR(){
+    if(_h5qrLib) return _h5qrLib;
+    _h5qrLib = new Promise((resolve, reject) => {
+      if(window.Html5Qrcode){ resolve(window.Html5Qrcode); return; }
+      const tryLoad = (url, fallback) => {
+        const s = document.createElement('script');
+        s.src = url;
+        s.onload = () => window.Html5Qrcode ? resolve(window.Html5Qrcode) : (fallback ? fallback() : reject(new Error('brak Html5Qrcode')));
+        s.onerror = () => fallback ? fallback() : reject(new Error('Nie można załadować dekodera'));
+        document.head.appendChild(s);
+      };
+      tryLoad('https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js',
+        () => tryLoad('https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js', null));
+    });
+    return _h5qrLib;
+  }
+
+  function isHttps(){
+    return location.protocol === 'https:'
+      || location.hostname === 'localhost'
+      || location.hostname === '127.0.0.1'
+      || /^192\.168\./.test(location.hostname)
+      || /^10\./.test(location.hostname);
+  }
+
+  function openScan(){
+    scanDialog.showModal();
+    const badge = el('scanHttpsBadge');
+    if(badge){
+      if(isHttps()){ badge.textContent = '✅ Kamera live dostępna'; badge.style.color = 'var(--accent)'; }
+      else { badge.textContent = '⚠️ Tylko zdjęcie (brak HTTPS)'; badge.style.color = 'var(--warn)'; }
+    }
+    setScanStatus('Wybierz metodę skanowania.', '');
+    setTimeout(() => { try{ el('manualCode').focus(); }catch{} }, 200);
+  }
+
+  function setScanStatus(msg, type=''){
+    const s = el('scanStatus');
+    if(!s) return;
+    s.textContent = msg;
+    s.style.color = type==='warn' ? 'var(--warn)' : type==='ok' ? 'var(--accent)' : type==='err' ? 'var(--danger)' : 'var(--muted)';
+  }
+
+  function setPhotoStatus(msg, type=''){
+    const s = el('scanPhotoStatus');
+    if(!s) return;
+    s.textContent = msg;
+    s.style.color = type==='ok' ? 'var(--accent)' : type==='err' ? 'var(--danger)' : type==='warn' ? 'var(--warn)' : 'var(--muted)';
+  }
+
+  async function decodeImageFile(file){
+    if(!file) return;
+    setPhotoStatus('⏳ Analizuję...', '');
+    const canvas = el('scanCanvas');
+    canvas.style.display = '';
+    const ctx = canvas.getContext('2d', { willReadFrequently:true });
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.src = url;
+    await new Promise(r => { img.onload = r; img.onerror = r; });
+    const MAX = 1400;
+    let w = img.naturalWidth, h = img.naturalHeight;
+    if(w > MAX){ h = Math.round(h*MAX/w); w = MAX; }
+    if(h > MAX){ w = Math.round(w*MAX/h); h = MAX; }
+    canvas.width = w; canvas.height = h;
+    ctx.drawImage(img, 0, 0, w, h);
+    URL.revokeObjectURL(url);
+
+    // 1. BarcodeDetector — natywny, szybki, bez internetu
+    if('BarcodeDetector' in window){
+      try{
+        let fmts = ['qr_code','ean_13','code_128','ean_8','upc_a','upc_e','code_39','itf','data_matrix','aztec','codabar'];
+        try{ const s = await BarcodeDetector.getSupportedFormats(); if(s.length) fmts = fmts.filter(f=>s.includes(f)); }catch{}
+        const det = new BarcodeDetector({ formats: fmts });
+        const codes = await det.detect(canvas);
+        if(codes && codes.length){
+          setPhotoStatus(`✅ Kod: ${codes[0].rawValue}`, 'ok');
+          handleScannedCode(codes[0].rawValue);
+          return;
+        }
+        setPhotoStatus('⚠️ Nie znaleziono kodu. Zrób zdjęcie bliżej, lepsze oświetlenie.', 'warn');
+        return;
+      }catch(e){}
+    }
+
+    // 2. html5-qrcode — potrzebuje internetu pierwszego razu
+    setPhotoStatus('⏳ Ładowanie dekodera...', '');
+    try{
+      const H5 = await loadH5QR();
+      const scanner = new H5('h5qrHelper');
+      const result = await scanner.scanFile(file, false);
+      setPhotoStatus(`✅ Kod: ${result}`, 'ok');
+      handleScannedCode(result);
+    }catch(e){
+      const m = String(e?.message||e||'');
+      if(m.toLowerCase().includes('no multi')||m.toLowerCase().includes('not found')||m.toLowerCase().includes('no qr')){
+        setPhotoStatus('⚠️ Nie znaleziono kodu. Przybliż kamerę i spróbuj ponownie.', 'warn');
+      } else if(m.includes('brak Html5Qrcode')||m.includes('Nie można')){
+        setPhotoStatus('❌ Brak internetu — nie można załadować dekodera. Wpisz kod ręcznie.', 'err');
+      } else {
+        setPhotoStatus('⚠️ Nie rozpoznano kodu. Wpisz ręcznie.', 'warn');
+      }
+    }
+  }
+
+  async function startScan(){
+    if(!isHttps()){
+      setScanStatus('❌ Kamera live wymaga HTTPS/localhost. Użyj przycisku 📷 Aparat powyżej — działa zawsze!', 'err');
+      return;
+    }
+    el('startScanBtn').style.display = 'none';
+    el('stopScanBtn').style.display = '';
+    el('scanEngineInfo').textContent = '';
+    setScanStatus('⏳ Uruchamianie kamery...', '');
+
+    // 1. BarcodeDetector + getUserMedia
+    if('BarcodeDetector' in window && navigator.mediaDevices?.getUserMedia){
+      try{
+        let fmts = ['qr_code','ean_13','code_128','ean_8','upc_a','upc_e','code_39','itf','data_matrix','aztec'];
+        try{ const s = await BarcodeDetector.getSupportedFormats(); if(s.length) fmts = fmts.filter(f=>s.includes(f)); }catch{}
+        const detector = new BarcodeDetector({ formats: fmts });
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video:{ facingMode:{ideal:'environment'}, width:{ideal:1280}, height:{ideal:720} }, audio:false
+        });
+        ui.scanner.stream = stream;
+        const video = document.createElement('video');
+        video.setAttribute('playsinline',''); video.setAttribute('muted','');
+        video.style.cssText = 'width:100%;border-radius:14px;max-height:280px;display:block;background:#000';
+        const view = el('scannerView'); view.innerHTML = ''; view.appendChild(video);
+        video.srcObject = stream; await video.play();
+        el('scanEngineInfo').textContent = '✓ BarcodeDetector (natywny — działa offline)';
+        setScanStatus('📡 Nakieruj kamerę na kod...', 'ok');
+        let scanning = false;
+        ui.scanner.timer = setInterval(async () => {
+          if(!ui.scanner.stream || scanning) return; scanning = true;
+          try{
+            const codes = await detector.detect(video);
+            if(codes && codes.length){
+              const val = codes[0].rawValue;
+              setScanStatus(`✅ Znaleziono: ${val}`, 'ok');
+              clearInterval(ui.scanner.timer); ui.scanner.timer = null;
+              stopScan(); handleScannedCode(val);
+            }
+          }catch(e){}
+          scanning = false;
+        }, 150);
+        return;
+      }catch(err){ _camErr(err); return; }
+    }
+
+    // 2. html5-qrcode live
+    try{
+      const H5 = await loadH5QR();
+      _liveScanner = new H5('scannerView');
+      el('scanEngineInfo').textContent = '✓ html5-qrcode';
+      await _liveScanner.start(
+        { facingMode:'environment' },
+        { fps:10, qrbox:{ width:Math.min(250,window.innerWidth-60), height:180 }, aspectRatio:1.33 },
+        (code) => { setScanStatus(`✅ Znaleziono: ${code}`,'ok'); stopScan(); handleScannedCode(code); },
+        ()=>{}
+      );
+      setScanStatus('📡 Nakieruj kamerę na kod...', 'ok');
+    }catch(err){ _camErr(err); }
+  }
+
+  function _camErr(err){
+    const e = String(err?.name||err||'');
+    let m = '❌ Nie można uruchomić kamery.';
+    if(e.includes('NotAllowed')||e.includes('Permission')) m = '❌ Brak uprawnień do kamery — zezwól w przeglądarce (ikona kłódki).';
+    else if(e.includes('NotFound')) m = '❌ Kamera nie znaleziona.';
+    else if(e.includes('NotReadable')) m = '❌ Kamera zajęta przez inną aplikację.';
+    setScanStatus(m, 'err');
+    el('startScanBtn').style.display = ''; el('stopScanBtn').style.display = 'none';
+    el('scanEngineInfo').textContent = '';
+  }
+
+  function stopScan(){
+    if(_liveScanner){
+      _liveScanner.stop().catch(()=>{}).finally(()=>{ try{_liveScanner.clear();}catch{} _liveScanner=null; el('scannerView').innerHTML=''; });
+    }
+    if(ui.scanner.timer){ clearInterval(ui.scanner.timer); cancelAnimationFrame(ui.scanner.timer); ui.scanner.timer=null; }
+    if(ui.scanner._zxReader){ try{ui.scanner._zxReader.reset();}catch{} ui.scanner._zxReader=null; }
+    if(ui.scanner.stream){ ui.scanner.stream.getTracks().forEach(t=>t.stop()); ui.scanner.stream=null; }
+    const sv = el('scannerView'); if(sv) sv.innerHTML='';
+    const canvas = el('scanCanvas'); if(canvas) canvas.style.display='none';
+    const startBtn=el('startScanBtn'); if(startBtn) startBtn.style.display='';
+    const stopBtn=el('stopScanBtn'); if(stopBtn) stopBtn.style.display='none';
+    const ei=el('scanEngineInfo'); if(ei) ei.textContent='';
+  }
+
+
+  // Listener USB/BT — zbiera znaki wpisane przez skaner (bardzo szybko) i triggeruje po Enter
+  (function setupUsbScannerListener(){
+    let usbBuffer = '';
+    let usbTimer = null;
+    document.addEventListener('keydown', function(e){
+      // Tylko gdy dialog skanera jest otwarty i focus NIE jest na innym polu
+      if(!scanDialog.open) return;
+      const active = document.activeElement;
+      // Jeśli focus jest na manualCode — normalne wpisywanie, Enter = szukaj
+      if(active && active.id === 'manualCode') return;
+      // Zbieraj znaki z "niewidocznego" strumienia skanera
+      if(e.key === 'Enter'){
+        if(usbBuffer.length >= 3){
+          el('manualCode').value = usbBuffer;
+          setScanStatus(`📱 USB/BT skaner: ${usbBuffer}`, 'ok');
+          handleScannedCode(usbBuffer);
+        }
+        usbBuffer = '';
+        clearTimeout(usbTimer);
+      } else if(e.key.length === 1){
+        usbBuffer += e.key;
+        clearTimeout(usbTimer);
+        usbTimer = setTimeout(() => { usbBuffer = ''; }, 200);
+      }
+    });
+  })();
+
+  function handleScannedCode(code){
+    const q = normalize(code);
+    const item = state.items.find(i => normalize(i.barcode) === q || normalize(i.name) === q);
+    const loc = state.locations.find(l => normalize(l.code) === q);
+    if(item){
+      const where = getLocationLabel(item.locationId);
+      toast(`✅ ${item.name} → ${where || 'brak lokalizacji'}`, 'success');
+      speak(`${item.name} znajduje się w ${where}`);
+      ui.view = 'inventory';
+      switchView('inventory');
+      el('filterSearch').value = item.name;
+      try{ scanDialog.close(); stopScan(); }catch{}
+      return;
+    }
+    if(loc){
+      toast(`📍 ${loc.name}`, 'success');
+      speak(`${loc.name}`);
+      ui.view = 'locations';
+      switchView('locations');
+      try{ scanDialog.close(); stopScan(); }catch{}
+      return;
+    }
+    // ── Kod nieznany → zaproponuj szybkie dodanie ──
+    toast(`Nieznany kod. Dodaj nowy przedmiot!`, 'warn');
+    try{ scanDialog.close(); stopScan(); }catch{}
+    openQuickAdd(code);
+  }
+
+  // ── Szybkie dodanie z kodu kreskowego ──
+  function openQuickAdd(barcode){
+    el('quickAddBarcode').value = barcode || '';
+    el('quickAddBarcodeDisplay').textContent = barcode || '—';
+    el('quickAddName').value = '';
+    el('quickAddQty').value = 1;
+    el('quickAddCategory').value = '';
+    el('quickAddLocation').innerHTML = '<option value="">Brak lokalizacji</option>' +
+      state.locations.map(l => `<option value="${escapeHTML(l.id)}">${escapeHTML(getLocationLabel(l.id))}</option>`).join('');
+    quickAddDialog.showModal();
+    setTimeout(() => { try{ el('quickAddName').focus(); }catch{} }, 160);
+  }
+
+  // ============================================================
+  //  AI ROZPOZNAWANIE PRZEZ ZDJĘCIE — Claude Vision
+  // ============================================================
+
+  let _aiCurrentFile = null;
+  let _aiCurrentTags = [];
+  const aiReviewDialog = el('aiReviewDialog');
+
+  function fileToBase64(file){
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result.split(',')[1]);
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+  }
+
+  async function identifyFromPhoto(file){
+    if(!file) return;
+    _aiCurrentFile = file;
+    _aiCurrentTags = [];
+
+    // Otwórz dialog w stanie ładowania
+    el('aiReviewLoading').style.display = '';
+    el('aiReviewContent').style.display = 'none';
+    el('aiReviewStatus').textContent = 'Analizuję zdjęcie przez Claude Vision…';
+    el('aiReviewStatus').style.color = '';
+    aiReviewDialog.showModal();
+
+    const apiKey = state.settings.anthropicKey || '';
+    if(!apiKey){
+      el('aiReviewStatus').textContent = '❌ Brak klucza API. Przejdź do Ustawień → wklej klucz Anthropic.';
+      el('aiReviewStatus').style.color = 'var(--danger)';
+      return;
+    }
+
+    try{
+      const base64 = await fileToBase64(file);
+      const mediaType = (file.type && file.type.startsWith('image/')) ? file.type : 'image/jpeg';
+
+      const prompt = `Jesteś ekspertem od identyfikacji produktów dla aplikacji do zarządzania domowym inwentarzem.
+Przeanalizuj dokładnie to zdjęcie i zidentyfikuj przedmiot.
+Szukaj: nazwy produktu, marki, modelu, kategorii, ceny rynkowej, zastosowania.
+Odpowiedz WYŁĄCZNIE prawidłowym JSON-em — zero tekstu przed ani po:
+{
+  "name": "dokładna nazwa po polsku",
+  "category": "kategoria (Elektronika/Narzędzia/Dom/Odzież/Żywność/Kosmetyki/Inne)",
+  "brand": "marka lub null",
+  "model": "model/seria lub null",
+  "description": "2-3 zdania opisu po polsku",
+  "estimatedPrice": liczba_PLN_lub_null,
+  "unit": "szt",
+  "tags": ["tag1","tag2","tag3"],
+  "alternatives": ["inna możliwa nazwa 1","inna możliwa nazwa 2"],
+  "notes": "wskazówki dla użytkownika, szczegóły identyfikacji",
+  "confidence": 0_do_100
+}`;
+
+      el('aiReviewStatus').textContent = '⏳ Claude analizuje zdjęcie…';
+
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-opus-4-6',
+          max_tokens: 900,
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'image', source: { type:'base64', media_type: mediaType, data: base64 } },
+              { type: 'text', text: prompt }
+            ]
+          }]
+        })
+      });
+
+      if(!res.ok){
+        const errData = await res.json().catch(()=>({error:{message:`HTTP ${res.status}`}}));
+        throw new Error(errData?.error?.message || `HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      const rawText = data.content?.find(c => c.type === 'text')?.text || '';
+      const match = rawText.match(/\{[\s\S]*\}/);
+      if(!match) throw new Error('AI zwróciło nieoczekiwany format — spróbuj ponownie.');
+
+      const product = JSON.parse(match[0]);
+      _showAIReview(product, file);
+
+    }catch(err){
+      const msg = String(err?.message || err || 'Nieznany błąd');
+      el('aiReviewStatus').textContent = `❌ ${msg.includes('401') ? 'Nieprawidłowy klucz API — sprawdź ustawienia.' : msg.includes('429') ? 'Limit API — poczekaj chwilę i spróbuj ponownie.' : msg}`;
+      el('aiReviewStatus').style.color = 'var(--danger)';
+    }
+  }
+
+  function _showAIReview(product, file){
+    el('aiReviewLoading').style.display = 'none';
+    el('aiReviewContent').style.display = '';
+
+    // Miniaturka zdjęcia
+    const thumb = el('aiThumb');
+    if(thumb._prevUrl) URL.revokeObjectURL(thumb._prevUrl);
+    thumb._prevUrl = URL.createObjectURL(file);
+    thumb.src = thumb._prevUrl;
+
+    // Pasek pewności
+    const conf = Math.max(0, Math.min(100, Number(product.confidence || 0)));
+    el('aiConfidenceFill').style.width = conf + '%';
+    el('aiConfidenceFill').style.background =
+      conf >= 80 ? 'var(--accent)' :
+      conf >= 50 ? 'var(--warn)' : 'var(--danger)';
+    el('aiConfidenceText').textContent = conf + '%';
+    el('aiConfidenceLabel').textContent =
+      conf >= 80 ? '✅ Wysoka pewność rozpoznania' :
+      conf >= 50 ? '⚠️ Średnia pewność — sprawdź dane' :
+                   '❌ Niska pewność — zweryfikuj ręcznie';
+    el('aiConfidenceLabel').style.color =
+      conf >= 80 ? 'var(--accent)' : conf >= 50 ? 'var(--warn)' : 'var(--danger)';
+
+    // Pola formularza
+    el('aiName').value = product.name || '';
+    el('aiCategory').value = product.category || '';
+    el('aiBrand').value = [product.brand, product.model].filter(Boolean).join(' · ') || '';
+    el('aiDesc').value = product.description || '';
+    el('aiPrice').value = product.estimatedPrice != null ? product.estimatedPrice : '';
+    el('aiQty').value = 1;
+    el('aiNotes').textContent = product.notes || '';
+
+    // Tagi jako klikalne pillsy
+    _aiCurrentTags = [...(product.tags || [])];
+    _renderAITags();
+
+    // Alternatywy
+    const alts = product.alternatives || [];
+    if(alts.length){
+      el('aiAlternatives').style.display = '';
+      el('aiAltList').innerHTML = alts.map(a =>
+        `<button class="ai-tag" data-alt="${escapeHTML(a)}" title="Użyj tej nazwy">${escapeHTML(a)}</button>`
+      ).join('');
+      el('aiAltList').querySelectorAll('[data-alt]').forEach(btn =>
+        btn.onclick = () => { el('aiName').value = btn.dataset.alt; }
+      );
+    } else {
+      el('aiAlternatives').style.display = 'none';
+    }
+
+    // Lokalizacje
+    el('aiLocation').innerHTML = '<option value="">Brak lokalizacji</option>' +
+      state.locations.map(l => `<option value="${escapeHTML(l.id)}">${escapeHTML(getLocationLabel(l.id))}</option>`).join('');
+
+    // Focus na nazwie
+    setTimeout(() => { try{ el('aiName').focus(); el('aiName').select(); }catch{} }, 160);
+  }
+
+  function _renderAITags(){
+    const wrap = el('aiTagsWrap');
+    wrap.innerHTML = _aiCurrentTags.map((t, i) =>
+      `<span class="ai-tag" data-tagidx="${i}" title="Kliknij aby usunąć">${escapeHTML(t)} ×</span>`
+    ).join('');
+    wrap.querySelectorAll('[data-tagidx]').forEach(pill => {
+      pill.onclick = () => {
+        _aiCurrentTags.splice(Number(pill.dataset.tagidx), 1);
+        _renderAITags();
+      };
+    });
+  }
+
+  function _aiAddToInventory(){
+    const name = el('aiName').value.trim();
+    if(!name){ toast('Wpisz nazwę przedmiotu', 'warn'); el('aiName').focus(); return; }
+
+    const brandModel = el('aiBrand').value.trim();
+    const desc = [el('aiDesc').value.trim(), brandModel ? `Marka/model: ${brandModel}` : ''].filter(Boolean).join('\n');
+
+    const item = {
+      id: uid(),
+      name,
+      description: desc,
+      category: el('aiCategory').value.trim(),
+      locationId: el('aiLocation').value,
+      qty: Math.max(1, Number(el('aiQty').value || 1)),
+      unit: 'szt',
+      price: Number(el('aiPrice').value || 0),
+      minQty: 0,
+      barcode: '',
+      tags: [..._aiCurrentTags],
+      photos: [],
+      docs: [],
+      checklist: [],
+      needBuy: [],
+      status: 'available',
+      createdAt: nowISO(),
+      updatedAt: nowISO()
+    };
+
+    state.items.unshift(item);
+    addHistory('Dodano przez AI (rozpoznawanie zdjęcia)', 'item', item.id, null, item);
+    saveState();
+    aiReviewDialog.close();
+    try{ scanDialog.close(); stopScan(); }catch{}
+    toast(`✅ Dodano: ${name}`, 'success');
+    switchView('inventory');
+    el('filterSearch').value = name;
+  }
+
+  function scheduleSupabaseSync(){
+    clearTimeout(scheduleSupabaseSync._t);
+    if(!state.settings.supabase.enabled || !state.settings.supabase.url || !state.settings.supabase.key) return;
+    scheduleSupabaseSync._t = setTimeout(() => syncSupabase(true).catch(()=>{}), 1200);
+  }
+
+  async function syncSupabase(pushLocalFirst=false){
+    const sb = state.settings.supabase;
+    if(!sb.enabled || !sb.url || !sb.key || !sb.table || !sb.rowId) return;
+    const base = sb.url.replace(/\/$/, '');
+    const headers = {
+      'apikey': sb.key,
+      'Authorization': `Bearer ${sb.key}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    };
+    const remoteUrl = `${base}/rest/v1/${encodeURIComponent(sb.table)}?id=eq.${encodeURIComponent(sb.rowId)}`;
+    try{
+      const res = await fetch(remoteUrl, { headers });
+      let remote = null;
+      if(res.ok){
+        const rows = await res.json();
+        remote = rows?.[0] || null;
+      }
+      const localStamp = new Date(state.meta.updatedAt || 0).getTime();
+      const remoteStamp = remote?.updated_at ? new Date(remote.updated_at).getTime() : 0;
+      if(remote && remote.payload && remoteStamp > localStamp && !pushLocalFirst){
+        state = mergeDefaults(remote.payload, defaultState);
+        saveLocalOnly();
+        renderAll();
+        toast('Pobrano nowsze dane z chmury', 'success');
+        return;
+      }
+      const body = {
+        id: sb.rowId,
+        payload: state,
+        updated_at: new Date().toISOString()
+      };
+      const upsert = await fetch(`${base}/rest/v1/${encodeURIComponent(sb.table)}?on_conflict=id`, {
+        method:'POST',
+        headers: { ...headers, Prefer:'resolution=merge-duplicates,return=representation' },
+        body: JSON.stringify([body])
+      });
+      if(upsert.ok){
+        toast('Zsynchronizowano z Supabase', 'success');
+      }
+    }catch(err){
+      toast('Sync nie wyszedł', 'warn');
+    }
+  }
+
+  function hookItemActions(){
+    document.querySelectorAll('[data-edititem]').forEach(btn => btn.onclick = () => openItem(state.items.find(x => x.id === btn.dataset.edititem)));
+    document.querySelectorAll('[data-plus]').forEach(btn => btn.onclick = () => changeQty(btn.dataset.plus, 1));
+    document.querySelectorAll('[data-minus]').forEach(btn => btn.onclick = () => changeQty(btn.dataset.minus, -1));
+    document.querySelectorAll('[data-where]').forEach(btn => btn.onclick = () => handleWhere(btn.dataset.where));
+
+    // ── Inline qty editing — tap on qty cell ──
+    document.querySelectorAll('[data-qtyedit]').forEach(span => {
+      span.onclick = () => {
+        if(span.querySelector('input')) return; // already editing
+        const id = span.dataset.qtyedit;
+        const item = state.items.find(x => x.id === id);
+        if(!item) return;
+        const input = document.createElement('input');
+        input.type = 'number'; input.value = item.qty ?? 0; input.min = 0;
+        input.style.cssText = 'width:72px;padding:3px 6px;font-size:14px;font-weight:800;height:28px;border-radius:8px;border:1px solid var(--accent);background:var(--panel2);color:var(--text);text-align:center';
+        const origContent = span.innerHTML;
+        span.innerHTML = ''; span.appendChild(input);
+        input.select(); input.focus();
+        const commit = () => {
+          const newQty = Math.max(0, Number(input.value));
+          if(newQty !== item.qty){
+            const before = structuredClone(item);
+            item.qty = newQty; item.updatedAt = nowISO();
+            addHistory('Zmieniono stan (inline)', 'item', item.id, before, item);
+            saveState();
+          } else {
+            span.innerHTML = origContent;
+          }
+        };
+        input.onblur = commit;
+        input.onkeydown = e => { if(e.key==='Enter') input.blur(); if(e.key==='Escape'){ span.innerHTML=origContent; } };
+      };
+    });
+  }
+
+  function bindEvents(){
+    document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => switchView(t.dataset.view)));
+
+    el('toggleViewBtn').addEventListener('click', () => {
+      ui.mode = ui.mode === 'cards' ? 'table' : 'cards';
+      syncViewModeUI();
+      saveLocalOnly();
+    });
+
+    el('newItemBtn').addEventListener('click', () => openItem(null));
+    el('quickAddLocation').addEventListener('click', () => openLocation(null));
+    el('quickAddEvent').addEventListener('click', () => openEvent(null));
+    el('addLocationBtn').addEventListener('click', () => openLocation(null));
+    el('addBundleBtn').addEventListener('click', () => openBundle(null));
+    el('addLoanBtn').addEventListener('click', () => openLoan(null));
+    el('addSaleBtn').addEventListener('click', () => openSale(null));
+    el('addEventBtn').addEventListener('click', () => openEvent(null));
+    el('addDocBtn').addEventListener('click', () => openDoc(null));
+    el('copyShopping').addEventListener('click', () => { copyText(shoppingText()); toast('Skopiowano listę', 'success'); });
+    el('addShoppingItem').addEventListener('click', () => {
+      const txt = prompt('Co dodać do listy?');
+      if(!txt) return;
+      state.manualShopping.unshift(txt.trim());
+      addHistory('Dodano ręczny wpis do zakupów', 'shopping', txt.trim(), null, {text:txt.trim()});
+      saveState();
+    });
+    el('quickAddSample').addEventListener('click', () => {
+      const sample = {
+        id: uid(),
+        name: 'Nowy przedmiot',
+        description: 'Dodany próbnie',
+        category: 'Inne',
+        locationId: state.locations[0]?.id || '',
+        qty: 1,
+        unit: 'szt',
+        price: 0,
+        minQty: 0,
+        barcode: '',
+        tags: ['sample'],
+        photos: [],
+        docs: [],
+        checklist: [],
+        needBuy: [],
+        status: 'available',
+        createdAt: nowISO(),
+        updatedAt: nowISO()
+      };
+      state.items.unshift(sample);
+      addHistory('Dodano próbkę', 'item', sample.id, null, sample);
+      saveState();
+    });
+    el('saveFilterBtn').addEventListener('click', () => {
+      const name = prompt('Nazwa zakładki filtra:');
+      if(!name) return;
+      state.savedViews = state.savedViews || [];
+      state.savedViews.push({
+        name,
+        search: el('filterSearch').value,
+        category: el('filterCategory').value,
+        location: el('filterLocation').value,
+        status: el('filterStatus').value,
+        sortBy: el('sortBy').value,
+        viewMode: ui.mode
+      });
+      saveState('Zapisano filtr');
+    });
+    el('savedViews').addEventListener('change', () => {
+      const idx = Number(el('savedViews').value);
+      if(Number.isNaN(idx)) return;
+      const v = state.savedViews[idx];
+      if(!v) return;
+      el('filterSearch').value = v.search || '';
+      el('filterCategory').value = v.category || '';
+      el('filterLocation').value = v.location || '';
+      el('filterStatus').value = v.status || '';
+      el('sortBy').value = v.sortBy || 'updatedAt';
+      ui.mode = v.viewMode || 'cards';
+      syncViewModeUI();
+      renderAll();
+      toast('Wczytano zakładkę', 'success');
+    });
+    el('clearFilters').addEventListener('click', () => {
+      el('filterSearch').value = '';
+      el('filterCategory').value = '';
+      el('filterLocation').value = '';
+      el('filterStatus').value = '';
+      el('sortBy').value = 'updatedAt';
+      ui.sortDir = 'asc';
+      renderForView(ui.view);
+    });
+    // Filtry inwentarza — tylko rerenderują widok inventarza
+    ['filterCategory','filterLocation','filterStatus','sortBy'].forEach(id => el(id).addEventListener('change', () => renderInventory()));
+    el('filterSearch').addEventListener('input', () => { clearTimeout(window._srchT); window._srchT = setTimeout(()=>renderInventory(), 150); });
+    el('globalSearch').addEventListener('input', e => {
+      const q = e.target.value.trim();
+      if(!q) return;
+      clearTimeout(window._srchT2);
+      window._srchT2 = setTimeout(() => {
+        el('filterSearch').value = q;
+        if(ui.view !== 'inventory') switchView('inventory');
+        else renderInventory();
+      }, 200);
+    });
+    el('themeSel').addEventListener('change', e => { state.settings.theme = e.target.value; setTheme(e.target.value); saveLocalOnly(); });
+    el('prefTheme').addEventListener('change', e => { state.settings.theme = e.target.value; setTheme(e.target.value); saveLocalOnly(); });
+    el('prefView').addEventListener('change', e => { ui.mode = e.target.value; syncViewModeUI(); saveLocalOnly(); });
+    el('prefAutoSave').addEventListener('change', e => { state.settings.autoSave = e.target.value; saveLocalOnly(); });
+    el('voiceBtn').addEventListener('click', runVoice);
+    el('scanBtn').addEventListener('click', openScan);
+    el('scanBtnMobile').addEventListener('click', openScan);
+    el('closeScanBtn').addEventListener('click', () => { scanDialog.close(); stopScan(); });
+    el('startScanBtn').addEventListener('click', startScan);
+    el('stopScanBtn').addEventListener('click', stopScan);
+    el('scanPhotoInput').addEventListener('change', e => {
+      const file = e.target.files?.[0]; if(file) decodeImageFile(file); e.target.value='';
+    });
+    el('scanGalleryInput').addEventListener('change', e => {
+      const file = e.target.files?.[0]; if(file) decodeImageFile(file); e.target.value='';
+    });
+    el('manualSearchBtn').addEventListener('click', () => {
+      const code = el('manualCode').value.trim(); if(code) handleScannedCode(code);
+    });
+    el('manualAddBtn').addEventListener('click', () => {
+      const code = el('manualCode').value.trim();
+      if(!code){ toast('Wpisz najpierw kod', 'warn'); return; }
+      scanDialog.close(); stopScan(); openQuickAdd(code);
+    });
+    el('manualCode').addEventListener('keydown', e => {
+      if(e.key === 'Enter'){ const code = e.target.value.trim(); if(code) handleScannedCode(code); }
+    });
+
+    el('itemForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const item = buildItemForm();
+      if(!item.name){ toast('Dodaj nazwę', 'warn'); return; }
+      addOrUpdate(state.items, item, 'item');
+      itemDialog.close();
+      saveState();
+    });
+    el('cloneItemBtn').addEventListener('click', () => {
+      const item = buildItemForm();
+      item.id = uid();
+      item.name += ' (kopiа)';
+      item.createdAt = nowISO();
+      item.updatedAt = nowISO();
+      state.items.unshift(item);
+      addHistory('Sklonowano przedmiot', 'item', item.id, null, item);
+      saveState();
+      itemDialog.close();
+    });
+    el('deleteItemBtn').addEventListener('click', () => {
+      const id = el('itemId').value;
+      if(!id) return itemDialog.close();
+      if(!confirm('Usunąć przedmiot?')) return;
+      deleteToTrash(state.items, id, 'item');
+      itemDialog.close();
+      saveState();
+    });
+
+    el('locationForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const loc = buildLocationForm();
+      if(!loc.name) return;
+      addOrUpdate(state.locations, loc, 'location');
+      locationDialog.close();
+      saveState();
+    });
+    el('deleteLocationBtn').addEventListener('click', () => {
+      const id = el('locationId').value;
+      if(!id) return locationDialog.close();
+      if(!confirm('Usunąć lokalizację?')) return;
+      deleteToTrash(state.locations, id, 'location');
+      locationDialog.close();
+      saveState();
+    });
+
+    el('bundleForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const bundle = buildBundleForm();
+      if(!bundle.name) return;
+      addOrUpdate(state.bundles, bundle, 'bundle');
+      bundleDialog.close();
+      saveState();
+    });
+    el('deleteBundleBtn').addEventListener('click', () => {
+      const id = el('bundleId').value;
+      if(!id) return bundleDialog.close();
+      if(!confirm('Usunąć zestaw?')) return;
+      deleteToTrash(state.bundles, id, 'bundle');
+      bundleDialog.close();
+      saveState();
+    });
+
+    el('loanForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const loan = buildLoanForm();
+      if(!loan.subject || !loan.person || !loan.to) return;
+      addOrUpdate(state.loans, loan, 'loan');
+      loanDialog.close();
+      saveState();
+    });
+    el('deleteLoanBtn').addEventListener('click', () => {
+      const id = el('loanId').value;
+      if(!id) return loanDialog.close();
+      if(!confirm('Usunąć wypożyczenie?')) return;
+      deleteToTrash(state.loans, id, 'loan');
+      loanDialog.close();
+      saveState();
+    });
+
+    el('saleForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const sale = buildSaleForm();
+      if(!sale.itemName) return;
+      addOrUpdate(state.sales, sale, 'sale');
+      saleDialog.close();
+      saveState();
+    });
+    el('deleteSaleBtn').addEventListener('click', () => {
+      const id = el('saleId').value;
+      if(!id) return saleDialog.close();
+      if(!confirm('Usunąć sprzedaż?')) return;
+      deleteToTrash(state.sales, id, 'sale');
+      saleDialog.close();
+      saveState();
+    });
+
+    el('eventForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const ev = buildEventForm();
+      if(!ev.title) return;
+      addOrUpdate(state.events, ev, 'event');
+      eventDialog.close();
+      saveState();
+    });
+    el('deleteEventBtn').addEventListener('click', () => {
+      const id = el('eventId').value;
+      if(!id) return eventDialog.close();
+      if(!confirm('Usunąć wydarzenie?')) return;
+      deleteToTrash(state.events, id, 'event');
+      eventDialog.close();
+      saveState();
+    });
+
+    el('docForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const doc = buildDocForm();
+      if(!doc.name) return;
+      addOrUpdate(state.docs, doc, 'doc');
+      docDialog.close();
+      saveState();
+    });
+    el('deleteDocBtn').addEventListener('click', () => {
+      const id = el('docId').value;
+      if(!id) return docDialog.close();
+      if(!confirm('Usunąć dokument?')) return;
+      deleteToTrash(state.docs, id, 'doc');
+      docDialog.close();
+      saveState();
+    });
+
+    el('exportBtn').addEventListener('click', exportJson);
+    el('exportJsonBtn').addEventListener('click', exportJson);
+    el('downloadCsvBtn').addEventListener('click', exportCsv);
+
+    // ── AI — Rozpoznawanie przez zdjęcie ──
+    el('scanAIPhotoInput').addEventListener('change', e => {
+      const file = e.target.files?.[0]; e.target.value = '';
+      if(file){ try{scanDialog.close(); stopScan();}catch{} identifyFromPhoto(file); }
+    });
+    el('scanAIGalleryInput').addEventListener('change', e => {
+      const file = e.target.files?.[0]; e.target.value = '';
+      if(file){ try{scanDialog.close(); stopScan();}catch{} identifyFromPhoto(file); }
+    });
+    el('aiAddBtn').addEventListener('click', _aiAddToInventory);
+    el('aiRetryBtn').addEventListener('click', () => {
+      aiReviewDialog.close();
+      setTimeout(() => openScan(), 100);
+    });
+    el('aiTagInput').addEventListener('keydown', e => {
+      if(e.key === 'Enter' || e.key === ','){
+        e.preventDefault();
+        const val = e.target.value.trim().replace(/,$/, '');
+        if(val && !_aiCurrentTags.includes(val)){
+          _aiCurrentTags.push(val);
+          _renderAITags();
+        }
+        e.target.value = '';
+      }
+    });
+
+    // ── Ustawienia klucza Anthropic ──
+    el('saveAnthropicKey').addEventListener('click', () => {
+      const key = el('anthropicKeyInput').value.trim();
+      if(!key){ toast('Wpisz klucz API', 'warn'); return; }
+      if(!key.startsWith('sk-ant-')){ toast('⚠️ Klucz powinien zaczynać się od sk-ant-', 'warn'); }
+      state.settings.anthropicKey = key;
+      el('anthropicKeyInput').value = '';
+      saveLocalOnly();
+      renderSettings();
+      toast('✅ Klucz API zapisany', 'success');
+    });
+    el('clearAnthropicKey').addEventListener('click', () => {
+      state.settings.anthropicKey = '';
+      el('anthropicKeyInput').value = '';
+      el('anthropicKeyInput').placeholder = 'sk-ant-api03-...';
+      saveLocalOnly();
+      renderSettings();
+      toast('Klucz usunięty', 'success');
+    });
+    el('testAnthropicKey').addEventListener('click', async () => {
+      const key = state.settings.anthropicKey;
+      if(!key){ toast('Najpierw zapisz klucz API', 'warn'); return; }
+      el('anthropicKeyStatus').textContent = '⏳ Testowanie połączenia...';
+      el('anthropicKeyStatus').style.color = 'var(--muted)';
+      try{
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json', 'x-api-key': key, 'anthropic-version':'2023-06-01' },
+          body: JSON.stringify({ model:'claude-haiku-4-5-20251001', max_tokens:10, messages:[{role:'user',content:'hi'}] })
+        });
+        if(res.ok || res.status === 200){
+          el('anthropicKeyStatus').textContent = '✅ Połączenie działa! AI rozpoznawanie gotowe.';
+          el('anthropicKeyStatus').style.color = 'var(--accent)';
+        } else {
+          const d = await res.json().catch(()=>({}));
+          el('anthropicKeyStatus').textContent = `❌ Błąd ${res.status}: ${d?.error?.message || 'sprawdź klucz'}`;
+          el('anthropicKeyStatus').style.color = 'var(--danger)';
+        }
+      }catch(e){
+        el('anthropicKeyStatus').textContent = `❌ Błąd połączenia: ${e.message}`;
+        el('anthropicKeyStatus').style.color = 'var(--danger)';
+      }
+    });
+
+    // ── Quick Count ──
+    el('quickCountBtn').addEventListener('click', () => openQuickCount());
+    el('qcMinus').addEventListener('click', () => { el('qcQtyInput').value = Math.max(0, Number(el('qcQtyInput').value) - 1); });
+    el('qcPlus').addEventListener('click', () => { el('qcQtyInput').value = Number(el('qcQtyInput').value) + 1; });
+    el('qcSaveNext').addEventListener('click', () => { qcSave(); _qcIdx++; qcShow(); });
+    el('qcSkip').addEventListener('click', () => { _qcIdx++; qcShow(); });
+    el('qcSaveDone').addEventListener('click', () => { qcSave(); saveState(); quickCountDialog.close(); toast('✅ Liczenie zapisane!','success'); });
+    el('qcQtyInput').addEventListener('keydown', e => { if(e.key==='Enter'){ qcSave(); _qcIdx++; qcShow(); } });
+
+    // ── Udostępnij zakupy ──
+    el('shareShopping').addEventListener('click', () => {
+      const text = shoppingText();
+      if(navigator.share){
+        navigator.share({ title:'Lista zakupów', text }).catch(()=>{});
+      } else {
+        copyText(text); toast('📋 Lista skopiowana do schowka', 'success');
+      }
+    });
+
+    // ── Mobile bottom nav ──
+    document.querySelectorAll('[data-navview]').forEach(btn => btn.addEventListener('click', () => {
+      switchView(btn.dataset.navview);
+    }));
+    el('navScanBtn').addEventListener('click', openScan);
+
+    // ── FAB ──
+    el('fabAdd').addEventListener('click', () => openItem(null));
+
+
+    // ── Szybki formularz z kodu kreskowego ──
+    el('quickAddForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const name = el('quickAddName').value.trim();
+      if(!name){ toast('Wpisz nazwę przedmiotu', 'warn'); return; }
+      const item = {
+        id: uid(),
+        name,
+        description: '',
+        category: el('quickAddCategory').value.trim(),
+        locationId: el('quickAddLocation').value,
+        qty: Number(el('quickAddQty').value || 1),
+        unit: 'szt',
+        price: 0,
+        minQty: 0,
+        barcode: el('quickAddBarcode').value,
+        tags: [],
+        photos: [],
+        docs: [],
+        checklist: [],
+        needBuy: [],
+        status: 'available',
+        createdAt: nowISO(),
+        updatedAt: nowISO()
+      };
+      state.items.unshift(item);
+      addHistory('Szybko dodano z kodu kreskowego', 'item', item.id, null, item);
+      saveState();
+      quickAddDialog.close();
+      toast(`✅ Dodano: ${name}`, 'success');
+      switchView('inventory');
+      el('filterSearch').value = name;
+    });
+    el('quickAddFullFormBtn').addEventListener('click', () => {
+      const barcode = el('quickAddBarcode').value;
+      quickAddDialog.close();
+      openItem(null);
+      setTimeout(() => {
+        el('itemBarcode').value = barcode;
+        el('itemName').focus();
+      }, 100);
+    });
+    // Kopiuj komendę Python serwera z ustawień
+    el('copyPythonCmd').addEventListener('click', () => {
+      const cmd = 'python3 -m http.server 8080';
+      navigator.clipboard?.writeText(cmd);
+      toast('Komenda skopiowana: python3 -m http.server 8080', 'success');
+    });
+    el('importFile').addEventListener('change', e => {
+      const file = e.target.files?.[0];
+      if(file) importJsonFile(file);
+      e.target.value = '';
+    });
+    el('resetBtn').addEventListener('click', () => {
+      if(!confirm('Wyczyścić całość?')) return;
+      localStorage.removeItem(KEY);
+      localStorage.removeItem(PREF);
+      localStorage.removeItem(VIEW_KEY);
+      state = structuredClone(defaultState);
+      saveLocalOnly();
+      renderAll();
+      toast('Wyczyszczono', 'success');
+    });
+    el('filterHistoryToggle').addEventListener('click', () => {
+      ui.filterHistoryOnlyItem = !ui.filterHistoryOnlyItem;
+      renderHistory();
+    });
+    el('emptyTrashBtn').addEventListener('click', () => {
+      if(!confirm('Opróżnić kosz?')) return;
+      state.trash = [];
+      saveState();
+    });
+    el('printLocationCodes').addEventListener('click', renderPrintCodes);
+    el('sbEnabled').addEventListener('change', e => { state.settings.supabase.enabled = e.target.checked; saveLocalOnly(); if(e.target.checked) scheduleSupabaseSync(); });
+    el('sbUrl').addEventListener('change', e => { state.settings.supabase.url = e.target.value.trim(); saveLocalOnly(); });
+    el('sbKey').addEventListener('change', e => { state.settings.supabase.key = e.target.value.trim(); saveLocalOnly(); });
+    el('sbTable').addEventListener('change', e => { state.settings.supabase.table = e.target.value.trim() || 'smart_magazyn_state'; saveLocalOnly(); });
+    el('sbRowId').addEventListener('change', e => { state.settings.supabase.rowId = e.target.value.trim() || 'main'; saveLocalOnly(); });
+    el('sbPull').addEventListener('click', () => syncSupabase(false));
+    el('sbPush').addEventListener('click', () => syncSupabase(true));
+    el('icalExportBtn').addEventListener('click', exportIcal);
+
+    document.addEventListener('keydown', e => {
+      if(e.target && ['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
+      if(e.key === 'n' || e.key === 'N'){ openItem(null); }
+      if(e.key === 's' || e.key === 'S'){ openScan(); }
+      if(e.key === 'v' || e.key === 'V'){ runVoice(); }
+      if(e.key === '/'){ e.preventDefault(); el('globalSearch').focus(); }
+    });
+  }
+
+  function exportIcal(){
+    const lines = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Smart Magazyn ERP//PL'
+    ];
+    state.events.forEach(ev => {
+      lines.push('BEGIN:VEVENT');
+      lines.push(`UID:${ev.id}`);
+      lines.push(`DTSTAMP:${new Date(ev.createdAt || nowISO()).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z')}`);
+      lines.push(`DTSTART:${new Date(ev.date).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z')}`);
+      lines.push(`SUMMARY:${(ev.title || '').replace(/\n/g, ' ')}`);
+      if(ev.note) lines.push(`DESCRIPTION:${ev.note.replace(/\n/g, ' ')}`);
+      lines.push('END:VEVENT');
+    });
+    lines.push('END:VCALENDAR');
+    const blob = new Blob([lines.join('\r\n')], {type:'text/calendar'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'smart_magazyn.ics';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function init(){
+    document.body.setAttribute('data-theme', state.settings.theme || 'matrix');
+    el('themeSel').value = state.settings.theme || 'matrix';
+    el('prefTheme').value = state.settings.theme || 'matrix';
+    el('prefView').value = state.settings.view || 'cards';
+    el('prefAutoSave').value = state.settings.autoSave || 'on';
+    state.settings.supabase = mergeDefaults(state.settings.supabase || {}, defaultState.settings.supabase);
+    // Pokaż status HTTPS w ustawieniach
+    const badge = el('httpsStatusBadge');
+    if(badge){
+      if(isHttps()){
+        badge.textContent = '✅ Kamera dostępna (HTTPS/localhost)';
+        badge.style.color = 'var(--accent)';
+      } else {
+        badge.textContent = '⚠️ Kamera niedostępna — otwórz przez localhost';
+        badge.style.color = 'var(--warn)';
+      }
+    }
+    syncViewModeUI();
+    bindEvents();
+    renderAll();
+    setInterval(renderTopClock, 1000);
+    setInterval(() => {
+      if(state.settings.supabase.enabled && state.settings.supabase.url && state.settings.supabase.key) {
+        syncSupabase(false).catch(()=>{});
+      }
+    }, 5 * 60 * 1000);
+    if(state.settings.supabase.enabled && state.settings.supabase.url && state.settings.supabase.key){
+      syncSupabase(false).catch(()=>{});
+    }
+  }
+
+  // ── Quick Count — Szybkie liczenie ──
+  let _qcItems = [];
+  let _qcIdx = 0;
+
+  function openQuickCount(filter){
+    _qcItems = filter ? state.items.filter(filter) : [...state.items];
+    _qcIdx = 0;
+    quickCountDialog.showModal();
+    qcShow();
+  }
+
+  function qcShow(){
+    if(_qcIdx >= _qcItems.length){
+      saveState(); quickCountDialog.close();
+      toast(`✅ Liczenie zakończone! Sprawdzono ${_qcItems.length} przedmiotów.`, 'success');
+      return;
+    }
+    const item = _qcItems[_qcIdx];
+    el('qcProgress').textContent = `Przedmiot ${_qcIdx + 1} z ${_qcItems.length}`;
+    el('qcItemName').textContent = item.name || 'Bez nazwy';
+    el('qcItemMeta').textContent = [item.category, getLocationLabel(item.locationId)].filter(Boolean).join(' • ') + ` • Ostatnio: ${item.qty ?? 0} ${item.unit || 'szt'}`;
+    el('qcUnit').textContent = item.unit || 'szt';
+    el('qcQtyInput').value = item.qty ?? 0;
+    setTimeout(() => { try{ el('qcQtyInput').select(); el('qcQtyInput').focus(); }catch{} }, 80);
+  }
+
+  function qcSave(){
+    const live = state.items.find(x => x.id === _qcItems[_qcIdx]?.id);
+    if(live){
+      const newQty = Math.max(0, Number(el('qcQtyInput').value));
+      if(newQty !== live.qty){
+        const before = structuredClone(live);
+        live.qty = newQty; live.updatedAt = nowISO();
+        addHistory('Szybkie liczenie', 'item', live.id, before, live);
+      }
+    }
+  }
+
+  window.openItem = openItem;
+  window.openLocation = openLocation;
+  window.openBundle = openBundle;
+  window.openQuickAdd = openQuickAdd;
+  window.stopScan = stopScan;
+  window.isHttps = isHttps;
+  window.openQuickCount = openQuickCount;
+  window.openLocation = openLocation;
+  window.openBundle = openBundle;
+  window.openLoan = openLoan;
+  window.openSale = openSale;
+  window.openEvent = openEvent;
+  window.openDoc = openDoc;
+
+  init();
+})();
+</script>
+</body>
+</html>
